@@ -71,12 +71,23 @@ function loadFromStorage<T>(key: string, fallback: T): T {
                 <span class="kanban-col-title">{{ stage.label }}</span>
                 <span class="kanban-col-count">{{ tasksForStage(stage.id).length }}</span>
               </div>
-              <div class="kanban-cards">
+              <div class="kanban-cards"
+                [class.drop-target]="dragOverStage() === stage.id"
+                (dragover)="onColumnDragOver($event)"
+                (drop)="onColumnDrop($event, stage.id)"
+                (dragenter)="onColumnDragEnter($event, stage.id)"
+                (dragleave)="onColumnDragLeave($event)">
                 @if (tasksForStage(stage.id).length === 0) {
                   <div class="empty-state">No tasks</div>
                 }
                 @for (task of tasksForStage(stage.id); track task.id) {
-                  <div class="kanban-card" (click)="openTaskPopup(task.id)" tabindex="0" role="button" [attr.aria-label]="task.title">
+                  <div class="kanban-card"
+                    draggable="true"
+                    [class.dragging]="draggingTaskId() === task.id"
+                    (dragstart)="onCardDragStart($event, task.id)"
+                    (dragend)="onCardDragEnd()"
+                    (click)="openTaskPopup(task.id)"
+                    tabindex="0" role="button" [attr.aria-label]="task.title">
                     <div class="kanban-card-title">{{ task.title }}</div>
                     <div class="kanban-card-meta">
                       @if (task.priority) {
@@ -247,13 +258,15 @@ function loadFromStorage<T>(key: string, fallback: T): T {
     .kanban-col[data-stage="roadblocked"] .kanban-col-title { color: #d32f2f; }
     .kanban-col[data-stage="completed"]   .kanban-col-title { color: #2e7d32; }
 
-    .kanban-cards { display: flex; flex-direction: column; gap: 10px; min-height: 60px; }
+    .kanban-cards { display: flex; flex-direction: column; gap: 10px; min-height: 60px; border-radius: 8px; transition: background .15s, outline .15s; }
+    .kanban-cards.drop-target { background: rgba(124,92,191,.08); outline: 2px dashed #7c5cbf; }
     .kanban-card {
       background: #f8f9fc; border: 1px solid #e8eaed;
       border-radius: 10px; padding: 12px 14px;
-      cursor: pointer; transition: box-shadow .15s, border-color .15s;
+      cursor: grab; transition: box-shadow .15s, border-color .15s, opacity .15s;
     }
     .kanban-card:hover { box-shadow: 0 3px 12px rgba(0,0,0,.1); border-color: #c8cdd6; }
+    .kanban-card.dragging { opacity: 0.4; cursor: grabbing; }
     .kanban-card-title { font-size: 0.88rem; font-weight: 600; color: #1e1e2e; margin-bottom: 6px; }
     .kanban-card-meta { display: flex; gap: 6px; flex-wrap: wrap; }
 
@@ -331,6 +344,9 @@ export class TasksIssues {
   readonly showTaskPopup = signal(false);
   readonly editingTaskId = signal<string | null>(null);
 
+  readonly draggingTaskId = signal<string | null>(null);
+  readonly dragOverStage  = signal<string | null>(null);
+
   popupTitle    = '';
   popupAssignee = '';
   popupNotes    = '';
@@ -347,6 +363,43 @@ export class TasksIssues {
 
   priorityClass(priority: string): string {
     return PRIORITY_CLASS[priority] ?? '';
+  }
+
+  onCardDragStart(event: DragEvent, taskId: string): void {
+    this.draggingTaskId.set(taskId);
+    event.dataTransfer?.setData('text/plain', taskId);
+  }
+
+  onCardDragEnd(): void {
+    this.draggingTaskId.set(null);
+    this.dragOverStage.set(null);
+  }
+
+  onColumnDragOver(event: DragEvent): void {
+    event.preventDefault();
+  }
+
+  onColumnDragEnter(event: DragEvent, stageId: string): void {
+    event.preventDefault();
+    this.dragOverStage.set(stageId);
+  }
+
+  onColumnDragLeave(event: DragEvent): void {
+    const target = event.currentTarget as HTMLElement;
+    if (!target.contains(event.relatedTarget as Node)) {
+      this.dragOverStage.set(null);
+    }
+  }
+
+  onColumnDrop(event: DragEvent, stageId: string): void {
+    event.preventDefault();
+    const taskId = event.dataTransfer?.getData('text/plain') ?? this.draggingTaskId();
+    if (taskId) {
+      this._tasks.update(ts => ts.map(t => t.id === taskId ? { ...t, status: stageId } : t));
+      localStorage.setItem('familyos-tasks', JSON.stringify(this._tasks()));
+    }
+    this.draggingTaskId.set(null);
+    this.dragOverStage.set(null);
   }
 
   openTaskPopup(taskId: string | null): void {

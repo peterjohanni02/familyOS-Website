@@ -20,6 +20,9 @@ import { Sidebar } from './sidebar/sidebar';
     .main-content {
       margin-left: 220px;
       flex: 1;
+      display: flex;
+      align-items: flex-start;
+      justify-content: flex-start;
       padding: 40px;
       min-width: 0;
     }
