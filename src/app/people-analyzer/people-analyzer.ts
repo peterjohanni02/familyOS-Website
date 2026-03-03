@@ -1,4 +1,6 @@
 import { Component } from '@angular/core';
+import { Router } from '@angular/router';
+import { PeopleService, Person } from './people.service';
 
 @Component({
   selector: 'app-people-analyzer',
@@ -11,16 +13,33 @@ import { Component } from '@angular/core';
 
     <section class="pa-section">
       <h2 class="pa-section-title">At a Glance</h2>
-      <div class="pa-card">
-        <p class="pa-placeholder">An overview of your family members will appear here.</p>
-      </div>
     </section>
 
     <section class="pa-section">
       <h2 class="pa-section-title">Individual Assessments</h2>
-      <div class="pa-card">
-        <p class="pa-placeholder">Individual assessments for each family member will appear here.</p>
-      </div>
+      <table>
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Spiritual</th>
+            <th>Mental</th>
+            <th>Academic</th>
+            <th>Behavioral</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (person of people; track person.id) {
+            <tr (click)="goToDetail(person.id)">
+              <td>{{ person.name }}</td>
+              <td>{{ person.spiritual }}/10</td>
+              <td>{{ person.mental }}/10</td>
+              <td>{{ person.academic }}/10</td>
+              <td>{{ person.behavioral }}/10</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+      <button class="add-btn" (click)="addPerson()">+ New Person</button>
     </section>
   `,
   styles: [`
@@ -41,11 +60,32 @@ import { Component } from '@angular/core';
       font-size: 1.6rem; font-weight: 700; color: #4a4a6a;
       border-bottom: 2px solid #7c5cbf; padding-bottom: 8px; margin-bottom: 20px;
     }
-    .pa-card {
-      background: #fff; border-radius: 12px; padding: 24px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    table { width: 100%; border-collapse: collapse; background: #fff; border-radius: 10px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,.08); }
+    thead th { background: #f5f3ff; color: #7c5cbf; font-weight: 700; padding: 12px 16px; text-align: left; font-size: .92rem; text-transform: uppercase; letter-spacing: .05em; }
+    tbody tr { border-bottom: 1px solid #f0f0f8; cursor: pointer; transition: background .15s; }
+    tbody tr:last-child { border-bottom: none; }
+    tbody tr:hover { background: #f5f3ff; }
+    tbody td { padding: 12px 16px; color: #333; font-size: .95rem; }
+    .add-btn {
+      margin-top: 12px; padding: 8px 18px; background: #7c5cbf; color: #fff;
+      border: none; border-radius: 6px; font-size: .95rem; font-weight: 600;
+      cursor: pointer; transition: background .15s;
     }
-    .pa-placeholder { font-size: 0.95rem; color: #888; }
+    .add-btn:hover { background: #5a3fa0; }
   `]
 })
-export class PeopleAnalyzer {}
+export class PeopleAnalyzer {
+  get people(): Person[] {
+    return this.peopleService.people;
+  }
+
+  constructor(private router: Router, private peopleService: PeopleService) {}
+
+  goToDetail(id: number): void {
+    this.router.navigate(['/people-analyzer/person', id]);
+  }
+
+  addPerson(): void {
+    this.router.navigate(['/people-analyzer/person', 'new']);
+  }
+}
