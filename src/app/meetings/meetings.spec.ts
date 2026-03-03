@@ -41,6 +41,22 @@ describe('Meetings', () => {
     expect(newMeeting.summary).toBe('');
   });
 
+  it('should save a new weekly meeting and clear newWeeklyMeeting', () => {
+    component.addWeeklyMeeting();
+    const countAfterAdd = component.weeklyMeetings.length;
+    component.saveWeeklyMeeting();
+    expect(component.newWeeklyMeeting).toBeNull();
+    expect(component.weeklyMeetings.length).toBe(countAfterAdd);
+  });
+
+  it('should save a new quarterly meeting and clear newQuarterlyMeeting', () => {
+    component.addQuarterlyMeeting();
+    const countAfterAdd = component.quarterlyMeetings.length;
+    component.saveQuarterlyMeeting();
+    expect(component.newQuarterlyMeeting).toBeNull();
+    expect(component.quarterlyMeetings.length).toBe(countAfterAdd);
+  });
+
   it('should render the "+ New Meeting" buttons', async () => {
     fixture.detectChanges();
     await fixture.whenStable();
