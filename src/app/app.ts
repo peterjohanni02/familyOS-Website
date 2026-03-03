@@ -15,6 +15,7 @@ import { Sidebar } from './sidebar/sidebar';
     :host {
       display: flex;
       min-height: 100vh;
+      width: 100%;
     }
     .main-content {
       margin-left: 220px;
@@ -23,6 +24,7 @@ import { Sidebar } from './sidebar/sidebar';
       align-items: flex-start;
       justify-content: flex-start;
       padding: 40px;
+      min-width: 0;
     }
     @media (max-width: 640px) {
       .main-content {

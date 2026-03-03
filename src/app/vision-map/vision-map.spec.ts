@@ -56,15 +56,82 @@ describe('VisionMap', () => {
     expect(component.values[0].explanation).toBe('');
   });
 
-  it('should add a new value row when addValue() is called', () => {
+  it('should show Edit buttons for Mission, Vision, and Values cards', () => {
+    fixture.detectChanges();
+    const buttons = (fixture.nativeElement as HTMLElement).querySelectorAll('.edit-btn');
+    expect(buttons.length).toBe(3);
+  });
+
+  it('should not show edit textarea for mission statement by default', () => {
+    fixture.detectChanges();
+    expect(component.editingMission).toBeFalsy();
+  });
+
+  it('should show mission edit textarea when startEditMission() is called', () => {
+    component.missionStatement = 'Test mission';
+    component.startEditMission();
+    expect(component.editingMission).toBeTruthy();
+    expect(component.missionDraft).toBe('Test mission');
+  });
+
+  it('should save mission and hide editor when saveMission() is called', () => {
+    component.startEditMission();
+    component.missionDraft = 'Updated mission';
+    component.saveMission();
+    expect(component.missionStatement).toBe('Updated mission');
+    expect(component.editingMission).toBeFalsy();
+  });
+
+  it('should show vision edit textarea when startEditVision() is called', () => {
+    component.visionStatement = 'Test vision';
+    component.startEditVision();
+    expect(component.editingVision).toBeTruthy();
+    expect(component.visionDraft).toBe('Test vision');
+  });
+
+  it('should save vision and hide editor when saveVision() is called', () => {
+    component.startEditVision();
+    component.visionDraft = 'Updated vision';
+    component.saveVision();
+    expect(component.visionStatement).toBe('Updated vision');
+    expect(component.editingVision).toBeFalsy();
+  });
+
+  it('should populate valuesDraft from values when startEditValues() is called', () => {
+    component.values = [{ phrase: 'Integrity', explanation: 'Being honest' }];
+    component.startEditValues();
+    expect(component.editingValues).toBeTruthy();
+    expect(component.valuesDraft.length).toBe(1);
+    expect(component.valuesDraft[0].phrase).toBe('Integrity');
+  });
+
+  it('should add a new draft value row when addValue() is called during editing', () => {
+    component.startEditValues();
     component.addValue();
-    expect(component.values.length).toBe(2);
+    expect(component.valuesDraft.length).toBe(2);
+  });
+
+  it('should not add to valuesDraft when addValue() is called outside edit mode', () => {
+    component.addValue();
+    expect(component.valuesDraft.length).toBe(0);
+  });
+
+  it('should save values and hide editor when saveValues() is called', () => {
+    component.startEditValues();
+    component.valuesDraft = [{ phrase: 'Love', explanation: 'Family first' }];
+    component.saveValues();
+    expect(component.values[0].phrase).toBe('Love');
+    expect(component.editingValues).toBeFalsy();
+  });
+
+  it('should correctly report hasValues() based on phrase content', () => {
+    component.values = [{ phrase: '', explanation: '' }];
+    expect(component.hasValues()).toBeFalsy();
+    component.values = [{ phrase: 'Integrity', explanation: '' }];
+    expect(component.hasValues()).toBeTruthy();
   });
 
   it('should call save methods without errors when invoked', () => {
-    expect(() => component.saveMission()).not.toThrow();
-    expect(() => component.saveVision()).not.toThrow();
-    expect(() => component.saveValues()).not.toThrow();
     expect(() => component.saveTenYear()).not.toThrow();
     expect(() => component.saveThreeYear()).not.toThrow();
     expect(() => component.saveOneYear()).not.toThrow();
