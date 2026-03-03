@@ -7,6 +7,7 @@ import { QuarterlyMeetingDetail } from './meetings/quarterly-meeting-detail/quar
 import { TasksIssues } from './tasks-issues/tasks-issues';
 import { Calendar } from './calendar/calendar';
 import { Finances } from './finances/finances';
+import { BudgetDetail } from './finances/budget-detail/budget-detail';
 import { Profile } from './profile/profile';
 import { PeopleAnalyzer } from './people-analyzer/people-analyzer';
 import { PersonDetail } from './people-analyzer/person-detail/person-detail';
@@ -20,6 +21,7 @@ export const routes: Routes = [
   { path: 'tasks-issues', component: TasksIssues },
   { path: 'calendar', component: Calendar },
   { path: 'finances', component: Finances },
+  { path: 'finances/budget', component: BudgetDetail },
   { path: 'profile', component: Profile },
   { path: 'people-analyzer', component: PeopleAnalyzer },
   { path: 'people-analyzer/person/:id', component: PersonDetail },
