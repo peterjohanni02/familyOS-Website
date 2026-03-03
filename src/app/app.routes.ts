@@ -9,6 +9,7 @@ import { Calendar } from './calendar/calendar';
 import { Finances } from './finances/finances';
 import { Profile } from './profile/profile';
 import { PeopleAnalyzer } from './people-analyzer/people-analyzer';
+import { PersonDetail } from './people-analyzer/person-detail/person-detail';
 
 export const routes: Routes = [
   { path: '', component: Home },
@@ -21,4 +22,5 @@ export const routes: Routes = [
   { path: 'finances', component: Finances },
   { path: 'profile', component: Profile },
   { path: 'people-analyzer', component: PeopleAnalyzer },
+  { path: 'people-analyzer/person/:id', component: PersonDetail },
 ];
