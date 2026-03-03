@@ -26,6 +26,19 @@
     tbody tr:last-child { border-bottom: none; }
     tbody tr:hover { background: #f5f3ff; }
     tbody td { padding: 12px 16px; color: #333; font-size: .95rem; }
+    .add-btn {
+      margin-top: 12px; padding: 8px 18px; background: #7c5cbf; color: #fff;
+      border: none; border-radius: 6px; font-size: .95rem; font-weight: 600;
+      cursor: pointer; transition: background .15s; display: block;
+    }
+    .add-btn:hover { background: #5a3fa0; }
+    .new-row td { padding: 6px 12px; }
+    .new-row input {
+      width: 100%; padding: 6px 8px; border: 1px solid #c4b5f0;
+      border-radius: 4px; font-size: .93rem; outline: none;
+      box-sizing: border-box;
+    }
+    .new-row input:focus { border-color: #7c5cbf; }
   </style>
 </head>
 <body>
@@ -76,7 +89,7 @@
       <!-- Weekly / Monthly Meetings -->
       <div class="section-block">
         <h2>🗓️ Weekly / Monthly Meetings</h2>
-        <table>
+        <table id="weekly-table">
           <thead>
             <tr>
               <th>Meeting Name</th>
@@ -97,12 +110,13 @@
             </tr>
           </tbody>
         </table>
+        <button class="add-btn" onclick="addWeeklyMeeting()">+ New Meeting</button>
       </div>
 
       <!-- Quarterly / Annual Meetings -->
       <div class="section-block">
         <h2>📆 Quarterly / Annual Meetings</h2>
-        <table>
+        <table id="quarterly-table">
           <thead>
             <tr>
               <th>Meeting Name</th>
@@ -126,9 +140,41 @@
             </tr>
           </tbody>
         </table>
+        <button class="add-btn" onclick="addQuarterlyMeeting()">+ New Meeting</button>
       </div>
     </div>
   </main>
+
+  <script>
+    function addWeeklyMeeting() {
+      const tbody = document.querySelector('#weekly-table tbody');
+      const row = document.createElement('tr');
+      row.className = 'new-row';
+      row.innerHTML = `
+        <td><input placeholder="Meeting Name" /></td>
+        <td><input type="date" /></td>
+        <td><input placeholder="Summary" /></td>
+      `;
+      tbody.appendChild(row);
+      const firstInput = row.querySelector('input');
+      if (firstInput) firstInput.focus();
+    }
+
+    function addQuarterlyMeeting() {
+      const tbody = document.querySelector('#quarterly-table tbody');
+      const row = document.createElement('tr');
+      row.className = 'new-row';
+      row.innerHTML = `
+        <td><input placeholder="Meeting Name" /></td>
+        <td><input type="date" /></td>
+        <td><input placeholder="Location" /></td>
+        <td><input placeholder="Summary" /></td>
+      `;
+      tbody.appendChild(row);
+      const firstInput = row.querySelector('input');
+      if (firstInput) firstInput.focus();
+    }
+  </script>
 
 </body>
 </html>
