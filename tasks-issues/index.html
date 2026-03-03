@@ -5,6 +5,246 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Tasks &amp; Issues · familyOS</title>
   <link rel="stylesheet" href="../styles.css" />
+  <style>
+    .main {
+      align-items: flex-start;
+      justify-content: flex-start;
+      padding: 0;
+    }
+    .page-content {
+      width: 100%;
+      padding: 32px 40px;
+    }
+    .page-header {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 32px;
+    }
+    .page-header .section-icon { font-size: 2.5rem; }
+    .page-header h1 {
+      font-size: 2rem;
+      font-weight: 800;
+      background: linear-gradient(135deg, #7c5cbf, #4a90d9);
+      background-clip: text;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 4px;
+    }
+    .page-header p { color: #666; font-size: 0.95rem; }
+
+    /* Sections */
+    .section {
+      background: #fff;
+      border-radius: 16px;
+      box-shadow: 0 2px 12px rgba(0,0,0,.07);
+      margin-bottom: 32px;
+      overflow: hidden;
+    }
+    .section-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 20px 24px;
+      border-bottom: 1px solid #eee;
+    }
+    .section-header h2 { font-size: 1.2rem; font-weight: 700; color: #1e1e2e; }
+
+    /* Buttons */
+    .btn-primary {
+      background: linear-gradient(135deg, #7c5cbf, #4a90d9);
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      padding: 8px 16px;
+      font-size: 0.88rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: opacity .15s;
+    }
+    .btn-primary:hover { opacity: 0.85; }
+    .btn-secondary {
+      background: #f0f2f5;
+      color: #444;
+      border: none;
+      border-radius: 8px;
+      padding: 8px 16px;
+      font-size: 0.88rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background .15s;
+    }
+    .btn-secondary:hover { background: #e2e5ea; }
+
+    /* Kanban */
+    .kanban-scroll {
+      display: flex;
+      overflow-x: auto;
+      padding: 20px 24px;
+      gap: 16px;
+      scrollbar-width: thin;
+      scrollbar-color: #ddd #f0f2f5;
+    }
+    .kanban-scroll::-webkit-scrollbar { height: 6px; }
+    .kanban-scroll::-webkit-scrollbar-track { background: #f0f2f5; }
+    .kanban-scroll::-webkit-scrollbar-thumb { background: #ddd; border-radius: 3px; }
+
+    .kanban-col {
+      min-width: 230px;
+      max-width: 230px;
+      flex-shrink: 0;
+    }
+    .kanban-col-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+    .kanban-col-title {
+      font-size: 0.82rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .5px;
+      color: #555;
+    }
+    .kanban-col-count {
+      background: #f0f2f5;
+      color: #888;
+      border-radius: 999px;
+      padding: 1px 8px;
+      font-size: 0.72rem;
+      font-weight: 600;
+    }
+    .kanban-cards { display: flex; flex-direction: column; gap: 10px; min-height: 60px; }
+    .kanban-card {
+      background: #f8f9fc;
+      border: 1px solid #e8eaed;
+      border-radius: 10px;
+      padding: 12px 14px;
+      cursor: pointer;
+      transition: box-shadow .15s, border-color .15s;
+    }
+    .kanban-card:hover { box-shadow: 0 3px 12px rgba(0,0,0,.1); border-color: #c8cdd6; }
+    .kanban-card-title { font-size: 0.88rem; font-weight: 600; color: #1e1e2e; margin-bottom: 6px; }
+    .kanban-card-meta { display: flex; gap: 6px; flex-wrap: wrap; }
+
+    /* Stage title colours */
+    .kanban-col[data-stage="future"]      .kanban-col-title { color: #7c5cbf; }
+    .kanban-col[data-stage="assigned"]    .kanban-col-title { color: #1565c0; }
+    .kanban-col[data-stage="in-progress"] .kanban-col-title { color: #e65100; }
+    .kanban-col[data-stage="roadblocked"] .kanban-col-title { color: #d32f2f; }
+    .kanban-col[data-stage="completed"]   .kanban-col-title { color: #2e7d32; }
+
+    /* Badges */
+    .badge { font-size: 0.7rem; font-weight: 600; padding: 2px 7px; border-radius: 999px; }
+    .badge-today    { background: #fde8e8; color: #d32f2f; }
+    .badge-week     { background: #fff3e0; color: #e65100; }
+    .badge-month    { background: #e8f5e9; color: #2e7d32; }
+    .badge-quarter  { background: #e3f2fd; color: #1565c0; }
+    .badge-year     { background: #f3e5f5; color: #6a1b9a; }
+    .badge-assignee { background: #ede7f6; color: #4527a0; }
+
+    /* Issues */
+    .issues-list { padding: 16px 24px; }
+    .issue-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 11px 14px;
+      background: #f8f9fc;
+      border: 1px solid #e8eaed;
+      border-radius: 10px;
+      margin-bottom: 10px;
+    }
+    .issue-drag-handle { color: #bbb; font-size: 1rem; flex-shrink: 0; line-height: 1; }
+    .issue-text { flex: 1; font-size: 0.92rem; color: #1e1e2e; }
+    .issue-input {
+      flex: 1;
+      font-size: 0.92rem;
+      color: #1e1e2e;
+      border: 1px solid #c8cdd6;
+      border-radius: 6px;
+      padding: 5px 9px;
+      font-family: inherit;
+      outline: none;
+    }
+    .issue-input:focus { border-color: #7c5cbf; }
+    .issue-actions { display: flex; gap: 4px; flex-shrink: 0; }
+    .btn-icon {
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-size: 0.95rem;
+      padding: 4px 6px;
+      border-radius: 6px;
+      transition: background .15s;
+      color: #666;
+      line-height: 1;
+    }
+    .btn-icon:hover { background: #e8eaed; }
+    .btn-icon:disabled { opacity: 0.3; cursor: default; }
+    .btn-icon:disabled:hover { background: none; }
+    .btn-icon.delete:hover { background: #fde8e8; color: #d32f2f; }
+
+    /* Popup */
+    .popup-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,.4);
+      z-index: 200;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .popup {
+      background: #fff;
+      border-radius: 16px;
+      padding: 28px 32px;
+      width: 100%;
+      max-width: 480px;
+      box-shadow: 0 20px 60px rgba(0,0,0,.15);
+    }
+    .popup h2 { font-size: 1.25rem; font-weight: 700; color: #1e1e2e; margin-bottom: 20px; }
+    .form-group { margin-bottom: 16px; }
+    .form-group label {
+      display: block;
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: #555;
+      margin-bottom: 5px;
+      text-transform: uppercase;
+      letter-spacing: .3px;
+    }
+    .form-control {
+      width: 100%;
+      border: 1px solid #dde1e8;
+      border-radius: 8px;
+      padding: 9px 12px;
+      font-size: 0.92rem;
+      font-family: inherit;
+      color: #1e1e2e;
+      background: #fafafa;
+      outline: none;
+      transition: border-color .15s;
+    }
+    .form-control:focus { border-color: #7c5cbf; background: #fff; }
+    textarea.form-control { resize: vertical; min-height: 80px; }
+    .popup-actions {
+      display: flex;
+      gap: 10px;
+      justify-content: flex-end;
+      margin-top: 22px;
+      padding-top: 18px;
+      border-top: 1px solid #eee;
+    }
+    .empty-state { text-align: center; padding: 20px; color: #aaa; font-size: 0.88rem; }
+
+    @media (max-width: 640px) {
+      .page-content { padding: 20px 16px; }
+      .kanban-col { min-width: 200px; max-width: 200px; }
+    }
+  </style>
 </head>
 <body>
 
@@ -39,12 +279,385 @@
   </aside>
 
   <main class="main">
-    <div class="hero">
-      <span class="section-icon">✅</span>
-      <h1>Tasks &amp; Issues</h1>
-      <p>Track what needs to get done.</p>
+    <div class="page-content">
+
+      <!-- Page header -->
+      <div class="page-header">
+        <span class="section-icon">✅</span>
+        <div>
+          <h1>Tasks &amp; Issues</h1>
+          <p>Track what needs to get done.</p>
+        </div>
+      </div>
+
+      <!-- ── Tasks Section ── -->
+      <section class="section">
+        <div class="section-header">
+          <h2>Tasks</h2>
+          <button class="btn-primary" onclick="openTaskPopup(null)">+ Create New Task</button>
+        </div>
+        <div class="kanban-scroll">
+          <div class="kanban-col" data-stage="future">
+            <div class="kanban-col-header">
+              <span class="kanban-col-title">Future</span>
+              <span class="kanban-col-count" id="count-future">0</span>
+            </div>
+            <div class="kanban-cards" id="stage-future"></div>
+          </div>
+          <div class="kanban-col" data-stage="assigned">
+            <div class="kanban-col-header">
+              <span class="kanban-col-title">Assigned</span>
+              <span class="kanban-col-count" id="count-assigned">0</span>
+            </div>
+            <div class="kanban-cards" id="stage-assigned"></div>
+          </div>
+          <div class="kanban-col" data-stage="in-progress">
+            <div class="kanban-col-header">
+              <span class="kanban-col-title">In Progress</span>
+              <span class="kanban-col-count" id="count-in-progress">0</span>
+            </div>
+            <div class="kanban-cards" id="stage-in-progress"></div>
+          </div>
+          <div class="kanban-col" data-stage="roadblocked">
+            <div class="kanban-col-header">
+              <span class="kanban-col-title">Roadblocked</span>
+              <span class="kanban-col-count" id="count-roadblocked">0</span>
+            </div>
+            <div class="kanban-cards" id="stage-roadblocked"></div>
+          </div>
+          <div class="kanban-col" data-stage="completed">
+            <div class="kanban-col-header">
+              <span class="kanban-col-title">Completed</span>
+              <span class="kanban-col-count" id="count-completed">0</span>
+            </div>
+            <div class="kanban-cards" id="stage-completed"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ── Issues Section ── -->
+      <section class="section">
+        <div class="section-header">
+          <h2>Issues List</h2>
+          <button class="btn-primary" onclick="addIssue()">+ Add Issue</button>
+        </div>
+        <div class="issues-list" id="issues-list"></div>
+      </section>
+
     </div>
   </main>
+
+  <!-- ── Task Detail Popup ── -->
+  <div class="popup-overlay" id="task-popup" style="display:none" role="dialog" aria-modal="true" aria-labelledby="popup-title">
+    <div class="popup">
+      <h2 id="popup-title">Task Details</h2>
+      <div class="form-group">
+        <label for="task-title">Title</label>
+        <input type="text" id="task-title" class="form-control" placeholder="Enter task title" />
+      </div>
+      <div class="form-group">
+        <label for="task-assignee">Assignee</label>
+        <input type="text" id="task-assignee" class="form-control" placeholder="Who is responsible?" />
+      </div>
+      <div class="form-group">
+        <label for="task-notes">Notes</label>
+        <textarea id="task-notes" class="form-control" placeholder="Add any notes or details..."></textarea>
+      </div>
+      <div class="form-group">
+        <label for="task-status">Status</label>
+        <select id="task-status" class="form-control">
+          <option value="future">Future</option>
+          <option value="assigned">Assigned</option>
+          <option value="in-progress">In Progress</option>
+          <option value="roadblocked">Roadblocked</option>
+          <option value="completed">Completed</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="task-priority">Priority</label>
+        <select id="task-priority" class="form-control">
+          <option value="Today">Today</option>
+          <option value="This Week">This Week</option>
+          <option value="This Month">This Month</option>
+          <option value="This Quarter">This Quarter</option>
+          <option value="This Year">This Year</option>
+        </select>
+      </div>
+      <div class="popup-actions">
+        <button class="btn-secondary" onclick="closeTaskPopup()">Close</button>
+        <button class="btn-primary" onclick="saveTask()">Save</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // ── Data ─────────────────────────────────────────────────────
+    var tasks = JSON.parse(localStorage.getItem('familyos-tasks') || '[]');
+    var issues = JSON.parse(localStorage.getItem('familyos-issues') || '[]');
+    var editingTaskId = null;
+    var editingIssueIndex = -1; // -1 = none, -2 = new issue
+
+    var STAGES = [
+      { id: 'future',      label: 'Future' },
+      { id: 'assigned',    label: 'Assigned' },
+      { id: 'in-progress', label: 'In Progress' },
+      { id: 'roadblocked', label: 'Roadblocked' },
+      { id: 'completed',   label: 'Completed' }
+    ];
+
+    var PRIORITY_CLASS = {
+      'Today':        'badge-today',
+      'This Week':    'badge-week',
+      'This Month':   'badge-month',
+      'This Quarter': 'badge-quarter',
+      'This Year':    'badge-year'
+    };
+
+    // ── Persistence ───────────────────────────────────────────────
+    function saveTasks()  { localStorage.setItem('familyos-tasks',  JSON.stringify(tasks));  }
+    function saveIssues() { localStorage.setItem('familyos-issues', JSON.stringify(issues)); }
+
+    // ── Helpers ───────────────────────────────────────────────────
+    function escapeHtml(str) {
+      var div = document.createElement('div');
+      div.appendChild(document.createTextNode(String(str)));
+      return div.innerHTML;
+    }
+    function escapeAttr(str) {
+      return String(str).replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+    }
+
+    // ── Tasks rendering ───────────────────────────────────────────
+    function renderTasks() {
+      STAGES.forEach(function(stage) {
+        var container = document.getElementById('stage-' + stage.id);
+        var countEl   = document.getElementById('count-' + stage.id);
+        var stageTasks = tasks.filter(function(t) { return t.status === stage.id; });
+        if (countEl) countEl.textContent = stageTasks.length;
+        if (stageTasks.length === 0) {
+          container.innerHTML = '<div class="empty-state">No tasks</div>';
+          return;
+        }
+        container.innerHTML = stageTasks.map(function(task) {
+          var badges = '';
+          if (task.priority && PRIORITY_CLASS[task.priority]) {
+            badges += '<span class="badge ' + PRIORITY_CLASS[task.priority] + '">' + escapeHtml(task.priority) + '</span>';
+          }
+          if (task.assignee) {
+            badges += '<span class="badge badge-assignee">' + escapeHtml(task.assignee) + '</span>';
+          }
+          return '<div class="kanban-card" onclick="openTaskPopup(\'' + escapeAttr(task.id) + '\')" tabindex="0" role="button" aria-label="' + escapeAttr(task.title) + '">' +
+            '<div class="kanban-card-title">' + escapeHtml(task.title) + '</div>' +
+            (badges ? '<div class="kanban-card-meta">' + badges + '</div>' : '') +
+            '</div>';
+        }).join('');
+      });
+    }
+
+    // ── Task popup ────────────────────────────────────────────────
+    function openTaskPopup(taskId) {
+      editingTaskId = taskId || null;
+      var titleEl    = document.getElementById('task-title');
+      var assigneeEl = document.getElementById('task-assignee');
+      var notesEl    = document.getElementById('task-notes');
+      var statusEl   = document.getElementById('task-status');
+      var priorityEl = document.getElementById('task-priority');
+      var headingEl  = document.getElementById('popup-title');
+
+      if (taskId) {
+        var task = tasks.find(function(t) { return t.id === taskId; });
+        if (task) {
+          titleEl.value    = task.title    || '';
+          assigneeEl.value = task.assignee || '';
+          notesEl.value    = task.notes    || '';
+          statusEl.value   = task.status   || 'future';
+          priorityEl.value = task.priority || 'This Week';
+          headingEl.textContent = 'Edit Task';
+        }
+      } else {
+        titleEl.value    = '';
+        assigneeEl.value = '';
+        notesEl.value    = '';
+        statusEl.value   = 'future';
+        priorityEl.value = 'This Week';
+        headingEl.textContent = 'New Task';
+      }
+
+      document.getElementById('task-popup').style.display = 'flex';
+      titleEl.focus();
+    }
+
+    function closeTaskPopup() {
+      document.getElementById('task-popup').style.display = 'none';
+      editingTaskId = null;
+    }
+
+    function saveTask() {
+      var title = document.getElementById('task-title').value.trim();
+      if (!title) {
+        document.getElementById('task-title').focus();
+        return;
+      }
+      var taskData = {
+        title:    title,
+        assignee: document.getElementById('task-assignee').value.trim(),
+        notes:    document.getElementById('task-notes').value.trim(),
+        status:   document.getElementById('task-status').value,
+        priority: document.getElementById('task-priority').value
+      };
+      if (editingTaskId) {
+        var idx = tasks.findIndex(function(t) { return t.id === editingTaskId; });
+        if (idx !== -1) tasks[idx] = Object.assign({}, tasks[idx], taskData);
+      } else {
+        taskData.id = Date.now().toString();
+        tasks.push(taskData);
+      }
+      saveTasks();
+      renderTasks();
+      closeTaskPopup();
+    }
+
+    // ── Issues rendering ──────────────────────────────────────────
+    function renderIssues() {
+      var container = document.getElementById('issues-list');
+      var html = '';
+
+      if (issues.length === 0 && editingIssueIndex !== -2) {
+        html = '<div class="empty-state">No issues yet. Click "+ Add Issue" to add one.</div>';
+      } else {
+        html = issues.map(function(issue, i) {
+          if (i === editingIssueIndex) {
+            return '<div class="issue-item">' +
+              '<span class="issue-drag-handle">⠿</span>' +
+              '<input class="issue-input" id="issue-edit-input" value="' + escapeAttr(issue.text) + '" />' +
+              '<div class="issue-actions">' +
+                '<button class="btn-primary" onclick="saveIssueEdit(' + i + ')">Save</button>' +
+                '<button class="btn-secondary" onclick="cancelIssueEdit()">Cancel</button>' +
+              '</div>' +
+              '</div>';
+          }
+          var upDisabled   = i === 0 ? ' disabled' : '';
+          var downDisabled = i === issues.length - 1 ? ' disabled' : '';
+          return '<div class="issue-item">' +
+            '<span class="issue-drag-handle">⠿</span>' +
+            '<span class="issue-text">' + escapeHtml(issue.text) + '</span>' +
+            '<div class="issue-actions">' +
+              '<button class="btn-icon" onclick="moveIssue(' + i + ',-1)" title="Move up"' + upDisabled + '>▲</button>' +
+              '<button class="btn-icon" onclick="moveIssue(' + i + ',1)"  title="Move down"' + downDisabled + '>▼</button>' +
+              '<button class="btn-icon" onclick="startEditIssue(' + i + ')" title="Edit">✏️</button>' +
+              '<button class="btn-icon delete" onclick="deleteIssue(' + i + ')" title="Delete">🗑️</button>' +
+            '</div>' +
+            '</div>';
+        }).join('');
+      }
+
+      if (editingIssueIndex === -2) {
+        html += '<div class="issue-item">' +
+          '<span class="issue-drag-handle">⠿</span>' +
+          '<input class="issue-input" id="issue-new-input" placeholder="Enter issue description..." />' +
+          '<div class="issue-actions">' +
+            '<button class="btn-primary" onclick="saveNewIssue()">Add</button>' +
+            '<button class="btn-secondary" onclick="cancelNewIssue()">Cancel</button>' +
+          '</div>' +
+          '</div>';
+      }
+
+      container.innerHTML = html;
+
+      // Focus newly created inputs
+      if (editingIssueIndex === -2) {
+        var ni = document.getElementById('issue-new-input');
+        if (ni) {
+          ni.focus();
+          ni.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter')  saveNewIssue();
+            if (e.key === 'Escape') cancelNewIssue();
+          });
+        }
+      } else if (editingIssueIndex >= 0) {
+        var ei = document.getElementById('issue-edit-input');
+        if (ei) {
+          ei.focus();
+          ei.select();
+          ei.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter')  saveIssueEdit(editingIssueIndex);
+            if (e.key === 'Escape') cancelIssueEdit();
+          });
+        }
+      }
+    }
+
+    function addIssue() {
+      editingIssueIndex = -2;
+      renderIssues();
+    }
+
+    function startEditIssue(i) {
+      editingIssueIndex = i;
+      renderIssues();
+    }
+
+    function saveIssueEdit(i) {
+      var input = document.getElementById('issue-edit-input');
+      var text = input ? input.value.trim() : '';
+      if (text) {
+        issues[i].text = text;
+        saveIssues();
+      }
+      editingIssueIndex = -1;
+      renderIssues();
+    }
+
+    function cancelIssueEdit() {
+      editingIssueIndex = -1;
+      renderIssues();
+    }
+
+    function saveNewIssue() {
+      var input = document.getElementById('issue-new-input');
+      var text = input ? input.value.trim() : '';
+      if (text) {
+        issues.push({ id: Date.now().toString(), text: text });
+        saveIssues();
+      }
+      editingIssueIndex = -1;
+      renderIssues();
+    }
+
+    function cancelNewIssue() {
+      editingIssueIndex = -1;
+      renderIssues();
+    }
+
+    function deleteIssue(i) {
+      issues.splice(i, 1);
+      saveIssues();
+      if (editingIssueIndex === i) editingIssueIndex = -1;
+      renderIssues();
+    }
+
+    function moveIssue(i, direction) {
+      var j = i + direction;
+      if (j < 0 || j >= issues.length) return;
+      var tmp = issues[i];
+      issues[i] = issues[j];
+      issues[j] = tmp;
+      saveIssues();
+      renderIssues();
+    }
+
+    // ── Event listeners ───────────────────────────────────────────
+    document.getElementById('task-popup').addEventListener('click', function(e) {
+      if (e.target === this) closeTaskPopup();
+    });
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') closeTaskPopup();
+    });
+
+    // ── Init ──────────────────────────────────────────────────────
+    renderTasks();
+    renderIssues();
+  </script>
 
 </body>
 </html>
