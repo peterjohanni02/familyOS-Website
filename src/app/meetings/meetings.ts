@@ -57,6 +57,7 @@ interface QuarterlyMeeting {
                   <td><input [(ngModel)]="meeting.name" placeholder="Meeting Name" (click)="$event.stopPropagation()" /></td>
                   <td><input [(ngModel)]="meeting.date" type="date" (click)="$event.stopPropagation()" /></td>
                   <td><input [(ngModel)]="meeting.summary" placeholder="Summary" (click)="$event.stopPropagation()" /></td>
+                  <td><button class="save-btn" (click)="saveWeeklyMeeting(); $event.stopPropagation()">Save</button></td>
                 </tr>
               }
             }
@@ -92,6 +93,7 @@ interface QuarterlyMeeting {
                   <td><input [(ngModel)]="meeting.date" type="date" (click)="$event.stopPropagation()" /></td>
                   <td><input [(ngModel)]="meeting.location" placeholder="Location" (click)="$event.stopPropagation()" /></td>
                   <td><input [(ngModel)]="meeting.summary" placeholder="Summary" (click)="$event.stopPropagation()" /></td>
+                  <td><button class="save-btn" (click)="saveQuarterlyMeeting(); $event.stopPropagation()">Save</button></td>
                 </tr>
               }
             }
@@ -136,6 +138,12 @@ interface QuarterlyMeeting {
       box-sizing: border-box;
     }
     .new-row input:focus { border-color: #7c5cbf; }
+    .save-btn {
+      padding: 5px 14px; background: #4caf7d; color: #fff;
+      border: none; border-radius: 4px; font-size: .88rem; font-weight: 600;
+      cursor: pointer; transition: background .15s; white-space: nowrap;
+    }
+    .save-btn:hover { background: #388e5a; }
   `]
 })
 export class Meetings {
@@ -166,6 +174,14 @@ export class Meetings {
     const nextId = Date.now();
     this.newQuarterlyMeeting = { id: nextId, name: '', date: '', location: '', summary: '' };
     this.quarterlyMeetings = [...this.quarterlyMeetings, this.newQuarterlyMeeting];
+  }
+
+  saveWeeklyMeeting(): void {
+    this.newWeeklyMeeting = null;
+  }
+
+  saveQuarterlyMeeting(): void {
+    this.newQuarterlyMeeting = null;
   }
 
   goToWeeklyDetail(id: number): void {
