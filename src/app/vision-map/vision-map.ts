@@ -191,22 +191,28 @@ interface Value {
   `]
 })
 export class VisionMap {
-  missionStatement = '';
+  missionStatement = 'The Johnson family exists to honor God, love one another deeply, and make a lasting positive impact on our community and the world. We commit to growing together in faith, character, and purpose — raising children who are confident, compassionate, and capable of leading lives of significance.';
   missionDraft = '';
   editingMission = false;
 
-  visionStatement = '';
+  visionStatement = 'By 2036, the Johnson family will be debt-free, thriving financially, and deeply connected in faith and relationship. Our children will be confident, well-educated adults with strong character and clear purpose. We will own our home outright, give generously to causes we believe in, and take one major family adventure every year.';
   visionDraft = '';
   editingVision = false;
 
-  values: Value[] = [{ phrase: '', explanation: '' }];
+  values: Value[] = [
+    { phrase: 'Faith First',       explanation: 'We anchor every decision in our faith and trust God with our family\'s story.' },
+    { phrase: 'Intentional Love',  explanation: 'We choose to love each other on purpose — through words, time, and service.' },
+    { phrase: 'Grow Every Day',    explanation: 'We never stop learning. Every family member pursues growth in mind, body, and spirit.' },
+    { phrase: 'Do Hard Things',    explanation: 'We embrace challenge and discomfort as the path to strength and resilience.' },
+    { phrase: 'Serve Others',      explanation: 'We look for ways to give back and use our blessings to bless those around us.' },
+  ];
   valuesDraft: Value[] = [];
   editingValues = false;
 
-  tenYearTarget = '';
-  threeYearPicture = '';
-  oneYearPlan = '';
-  quarterlyRocks = '';
+  tenYearTarget = '— All children are college-educated or in purposeful careers with strong character.\n— Home is paid off; net worth exceeds $1.5M.\n— James and Sarah are financially independent and giving 20%+ of income annually.\n— The family takes one international trip together each year.\n— Each child has a personal faith life, strong relationships, and a clear sense of calling.';
+  threeYearPicture = '— Car loans fully paid off.\n— 529 accounts funded at $50K+ per child.\n— Ethan accepted to and enrolled in college.\n— Lily leading a school leadership role.\n— Noah in a competitive sports program.\n— Ava reading and performing at 2 grade levels above average.\n— Family emergency fund at 6 months of expenses ($48K).';
+  oneYearPlan = '— Pay off both car loans.\n— Increase retirement contributions to 15% of income.\n— Complete family vision map refresh each quarter.\n— Host one family service project per quarter.\n— Ethan completes SAT prep and applies to 5 colleges.\n— Family completes one 5-day vacation together.';
+  quarterlyRocks = 'Q1 2026:\n1. James — Complete budget overhaul and open new savings sub-accounts.\n2. Sarah — Research and book family summer vacation.\n3. Ethan — Score 1300+ on practice SAT.\n4. Lily — Read 3 books from the family reading list.\n5. Noah — Finish soccer season with strong attendance.\n6. Ava — Complete phonics level 3 workbook.';
 
   hasValues(): boolean {
     return this.values.some(v => v.phrase.trim() !== '');

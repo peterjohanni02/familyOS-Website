@@ -148,13 +148,23 @@ interface QuarterlyMeeting {
 })
 export class Meetings {
   weeklyMeetings: WeeklyMeeting[] = [
-    { id: 1, name: 'Weekly Family Check-In', date: '2025-01-06', summary: 'Reviewed goals and upcoming tasks for the week.' },
-    { id: 2, name: 'Monthly Review', date: '2025-01-31', summary: 'Assessed monthly progress on rocks and finances.' },
+    { id: 1, name: 'Weekly Family Check-In', date: '2026-01-06', summary: 'Reviewed goals and upcoming tasks for the week.' },
+    { id: 2, name: 'Weekly Family Check-In', date: '2026-01-13', summary: 'Discussed Ethan\'s school project and Lily\'s recital prep.' },
+    { id: 3, name: 'Weekly Family Check-In', date: '2026-01-20', summary: 'Reviewed budget for January; everyone on track.' },
+    { id: 4, name: 'Monthly Review',          date: '2026-01-31', summary: 'Assessed monthly progress on rocks and finances.' },
+    { id: 5, name: 'Weekly Family Check-In', date: '2026-02-03', summary: 'Noah and Ava shared highlights from school week.' },
+    { id: 6, name: 'Weekly Family Check-In', date: '2026-02-10', summary: 'Planned Valentine\'s Day activities as a family.' },
+    { id: 7, name: 'Weekly Family Check-In', date: '2026-02-17', summary: 'Addressed chore chart and screen-time boundaries.' },
+    { id: 8, name: 'Monthly Review',          date: '2026-02-28', summary: 'February milestones hit; finances slightly over on food.' },
+    { id: 9, name: 'Weekly Family Check-In', date: '2026-03-03', summary: 'Spring schedule planning; sports sign-ups for Noah and Ava.' },
   ];
 
   quarterlyMeetings: QuarterlyMeeting[] = [
-    { id: 1, name: 'Q1 Family Planning', date: '2025-01-15', location: 'Living Room', summary: 'Set quarterly rocks and reviewed annual vision.' },
-    { id: 2, name: 'Annual Family Retreat', date: '2025-12-27', location: 'Mountain Cabin', summary: 'Year-in-review and goal setting for next year.' },
+    { id: 1, name: 'Q1 Family Planning',   date: '2026-01-04', location: 'Living Room',   summary: 'Set Q1 rocks and reviewed annual vision.' },
+    { id: 2, name: 'Q2 Family Planning',   date: '2026-04-05', location: 'Dining Room',   summary: 'Summer plans, budget review, and individual goals.' },
+    { id: 3, name: 'Q3 Family Planning',   date: '2026-07-05', location: 'Back Porch',    summary: 'Back-to-school prep, fall activities, and savings target.' },
+    { id: 4, name: 'Q4 Family Planning',   date: '2026-10-04', location: 'Living Room',   summary: 'Holiday planning, year-end financial review, and giving goals.' },
+    { id: 5, name: 'Annual Family Retreat', date: '2026-12-27', location: 'Mountain Cabin', summary: 'Year-in-review and goal setting for 2027.' },
   ];
 
   newWeeklyMeeting: WeeklyMeeting | null = null;
