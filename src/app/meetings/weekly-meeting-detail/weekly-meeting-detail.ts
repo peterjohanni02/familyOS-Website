@@ -62,6 +62,7 @@ import { PeopleService, Person, PersonReport } from '../../people-analyzer/peopl
 
       <div class="section-block">
         <h2>📰 Headlines</h2>
+        <textarea id="headlines-text" class="headlines-textarea" placeholder="Enter headlines..."></textarea>
       </div>
 
       <div class="section-block">
@@ -118,6 +119,14 @@ import { PeopleService, Person, PersonReport } from '../../people-analyzer/peopl
       box-sizing: border-box;
     }
     .checkin-textarea:focus { outline: none; border-color: #7c5cbf; }
+    .headlines-textarea {
+      width: 100%; min-height: 240px; padding: 14px; font-size: 1rem;
+      border: 2px solid #d6ccf5; border-radius: 10px; resize: vertical;
+      font-family: inherit; color: #1e1e2e; background: #faf9ff;
+      transition: border-color .15s; line-height: 1.6;
+      box-sizing: border-box;
+    }
+    .headlines-textarea:focus { outline: none; border-color: #7c5cbf; }
     table { width: 100%; border-collapse: collapse; background: #fff; border-radius: 10px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,.08); }
     thead th { background: #f5f3ff; color: #7c5cbf; font-weight: 700; padding: 12px 16px; text-align: left; font-size: .92rem; text-transform: uppercase; letter-spacing: .05em; }
     tbody tr { border-bottom: 1px solid #f0f0f8; cursor: pointer; transition: background .15s; }
