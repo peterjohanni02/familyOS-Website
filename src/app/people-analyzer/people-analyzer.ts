@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
-import { PeopleService, Person } from './people.service';
+import { PeopleService, Person, PersonReport } from './people.service';
 
 @Component({
   selector: 'app-people-analyzer',
@@ -31,10 +31,10 @@ import { PeopleService, Person } from './people.service';
           @for (person of people; track person.id) {
             <tr (click)="goToDetail(person.id)">
               <td>{{ person.name }}</td>
-              <td>{{ person.spiritual }}/10</td>
-              <td>{{ person.mental }}/10</td>
-              <td>{{ person.academic }}/10</td>
-              <td>{{ person.behavioral }}/10</td>
+              <td>{{ latestScore(person, 'spiritual') }}</td>
+              <td>{{ latestScore(person, 'mental') }}</td>
+              <td>{{ latestScore(person, 'academic') }}</td>
+              <td>{{ latestScore(person, 'behavioral') }}</td>
             </tr>
           }
         </tbody>
@@ -80,6 +80,11 @@ export class PeopleAnalyzer {
   }
 
   constructor(private router: Router, private peopleService: PeopleService) {}
+
+  latestScore(person: Person, field: keyof PersonReport): string {
+    const r = person.reports.at(-1);
+    return r ? `${r[field]}/10` : '—';
+  }
 
   goToDetail(id: number): void {
     this.router.navigate(['/people-analyzer/person', id]);
