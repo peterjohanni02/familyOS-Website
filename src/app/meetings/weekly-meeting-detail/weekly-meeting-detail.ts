@@ -10,6 +10,7 @@ import { PeopleService, Person, PersonReport } from '../../people-analyzer/peopl
       <div class="page-header">
         <button class="back-btn" (click)="goBack()">← Back</button>
         <h1>{{ meetingName }}</h1>
+        <button class="save-btn" (click)="saveMeeting()">💾 Save</button>
       </div>
 
       <div class="section-block">
@@ -84,6 +85,10 @@ import { PeopleService, Person, PersonReport } from '../../people-analyzer/peopl
       <div class="section-block">
         <h2>📆 Quarterly and Annual Meetings</h2>
       </div>
+
+      <div class="page-footer">
+        <button class="save-btn" (click)="saveMeeting()">💾 Save</button>
+      </div>
     </div>
   `,
   styles: [`
@@ -133,6 +138,15 @@ import { PeopleService, Person, PersonReport } from '../../people-analyzer/peopl
     tbody tr:last-child { border-bottom: none; }
     tbody tr:hover { background: #f5f3ff; }
     tbody td { padding: 12px 16px; color: #333; font-size: .95rem; }
+    .save-btn {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 8px 20px; background: #7c5cbf; color: #fff;
+      border-radius: 8px; font-weight: 600; font-size: .92rem;
+      border: none; cursor: pointer;
+      transition: background .15s;
+    }
+    .save-btn:hover { background: #6347a8; }
+    .page-footer { display: flex; justify-content: flex-end; padding-top: 16px; }
   `]
 })
 export class WeeklyMeetingDetail {
@@ -159,5 +173,10 @@ export class WeeklyMeetingDetail {
 
   goBack(): void {
     this.router.navigate(['/meetings']);
+  }
+
+  saveMeeting(): void {
+    // TODO: persist meeting notes
+    alert('Meeting notes saved!');
   }
 }
