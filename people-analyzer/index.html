@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Vision Map · familyOS</title>
+  <title>People Analyzer · familyOS</title>
   <link rel="stylesheet" href="../styles.css" />
 </head>
 <body>
@@ -17,7 +17,7 @@
       <a href="../index.html">
         <span class="nav-icon">🏠</span><span>Home</span>
       </a>
-      <a href="../vision-map/index.html" class="active">
+      <a href="../vision-map/index.html">
         <span class="nav-icon">🗺️</span><span>Vision Map</span>
       </a>
       <a href="../meetings/index.html">
@@ -35,7 +35,7 @@
       <a href="../profile/index.html">
         <span class="nav-icon">👤</span><span>Profile</span>
       </a>
-      <a href="../people-analyzer/index.html">
+      <a href="../people-analyzer/index.html" class="active">
         <span class="nav-icon">🧠</span><span>People Analyzer</span>
       </a>
     </nav>
@@ -43,11 +43,37 @@
 
   <main class="main">
     <div class="hero">
-      <span class="section-icon">🗺️</span>
-      <h1>Vision Map</h1>
-      <p>Plan your family's future together.</p>
+      <span class="section-icon">🧠</span>
+      <h1>People Analyzer</h1>
+    </div>
+
+    <div class="pa-section">
+      <h2 class="pa-section-title">At a Glance</h2>
+      <div class="pa-card">
+        <p>An overview of your family members will appear here.</p>
+      </div>
+    </div>
+
+    <div class="pa-section">
+      <h2 class="pa-section-title">Individual Assessments</h2>
+      <div class="pa-card">
+        <p>Individual assessments for each family member will appear here.</p>
+      </div>
     </div>
   </main>
+
+  <style>
+    .pa-section { margin-bottom: 40px; }
+    .pa-section-title {
+      font-size: 1.6rem; font-weight: 700; color: #4a4a6a;
+      border-bottom: 2px solid #7c5cbf; padding-bottom: 8px; margin-bottom: 20px;
+    }
+    .pa-card {
+      background: #fff; border-radius: 12px; padding: 24px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    }
+    .pa-card p { font-size: 0.95rem; color: #888; }
+  </style>
 
 </body>
 </html>
