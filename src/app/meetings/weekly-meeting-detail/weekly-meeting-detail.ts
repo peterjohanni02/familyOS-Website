@@ -145,7 +145,7 @@ export class WeeklyMeetingDetail {
   }
 
   goToPersonDetail(id: number): void {
-    this.router.navigate(['/people-analyzer/person', id]);
+    this.router.navigate(['/people-analyzer/person', id], { state: { backUrl: this.router.url } });
   }
 
   goBack(): void {
