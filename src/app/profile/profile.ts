@@ -6,7 +6,7 @@ import { Component } from '@angular/core';
   template: `
     <div class="hero">
       <span class="section-icon">👤</span>
-      <h1>Profile</h1>
+      <h1>Profile and Family</h1>
       <p>Manage your family member profiles.</p>
     </div>
   `,
