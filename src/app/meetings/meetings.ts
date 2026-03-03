@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 
 interface WeeklyMeeting {
@@ -18,7 +19,7 @@ interface QuarterlyMeeting {
 
 @Component({
   selector: 'app-meetings',
-  imports: [],
+  imports: [FormsModule],
   template: `
     <div class="page-content">
       <div class="page-header">
@@ -45,14 +46,23 @@ interface QuarterlyMeeting {
           </thead>
           <tbody>
             @for (meeting of weeklyMeetings; track meeting.id) {
-              <tr (click)="goToWeeklyDetail(meeting.id)">
-                <td>{{ meeting.name }}</td>
-                <td>{{ meeting.date }}</td>
-                <td>{{ meeting.summary }}</td>
-              </tr>
+              @if (meeting.id !== newWeeklyMeeting?.id) {
+                <tr (click)="goToWeeklyDetail(meeting.id)">
+                  <td>{{ meeting.name }}</td>
+                  <td>{{ meeting.date }}</td>
+                  <td>{{ meeting.summary }}</td>
+                </tr>
+              } @else {
+                <tr class="new-row">
+                  <td><input [(ngModel)]="meeting.name" placeholder="Meeting Name" (click)="$event.stopPropagation()" /></td>
+                  <td><input [(ngModel)]="meeting.date" type="date" (click)="$event.stopPropagation()" /></td>
+                  <td><input [(ngModel)]="meeting.summary" placeholder="Summary" (click)="$event.stopPropagation()" /></td>
+                </tr>
+              }
             }
           </tbody>
         </table>
+        <button class="add-btn" (click)="addWeeklyMeeting()">+ New Meeting</button>
       </div>
 
       <!-- Quarterly / Annual Meetings -->
@@ -69,15 +79,25 @@ interface QuarterlyMeeting {
           </thead>
           <tbody>
             @for (meeting of quarterlyMeetings; track meeting.id) {
-              <tr (click)="goToQuarterlyDetail(meeting.id)">
-                <td>{{ meeting.name }}</td>
-                <td>{{ meeting.date }}</td>
-                <td>{{ meeting.location }}</td>
-                <td>{{ meeting.summary }}</td>
-              </tr>
+              @if (meeting.id !== newQuarterlyMeeting?.id) {
+                <tr (click)="goToQuarterlyDetail(meeting.id)">
+                  <td>{{ meeting.name }}</td>
+                  <td>{{ meeting.date }}</td>
+                  <td>{{ meeting.location }}</td>
+                  <td>{{ meeting.summary }}</td>
+                </tr>
+              } @else {
+                <tr class="new-row">
+                  <td><input [(ngModel)]="meeting.name" placeholder="Meeting Name" (click)="$event.stopPropagation()" /></td>
+                  <td><input [(ngModel)]="meeting.date" type="date" (click)="$event.stopPropagation()" /></td>
+                  <td><input [(ngModel)]="meeting.location" placeholder="Location" (click)="$event.stopPropagation()" /></td>
+                  <td><input [(ngModel)]="meeting.summary" placeholder="Summary" (click)="$event.stopPropagation()" /></td>
+                </tr>
+              }
             }
           </tbody>
         </table>
+        <button class="add-btn" (click)="addQuarterlyMeeting()">+ New Meeting</button>
       </div>
     </div>
   `,
@@ -103,6 +123,19 @@ interface QuarterlyMeeting {
     tbody tr:last-child { border-bottom: none; }
     tbody tr:hover { background: #f5f3ff; }
     tbody td { padding: 12px 16px; color: #333; font-size: .95rem; }
+    .add-btn {
+      margin-top: 12px; padding: 8px 18px; background: #7c5cbf; color: #fff;
+      border: none; border-radius: 6px; font-size: .95rem; font-weight: 600;
+      cursor: pointer; transition: background .15s;
+    }
+    .add-btn:hover { background: #5a3fa0; }
+    .new-row td { padding: 6px 12px; }
+    .new-row input {
+      width: 100%; padding: 6px 8px; border: 1px solid #c4b5f0;
+      border-radius: 4px; font-size: .93rem; outline: none;
+      box-sizing: border-box;
+    }
+    .new-row input:focus { border-color: #7c5cbf; }
   `]
 })
 export class Meetings {
@@ -116,7 +149,24 @@ export class Meetings {
     { id: 2, name: 'Annual Family Retreat', date: '2025-12-27', location: 'Mountain Cabin', summary: 'Year-in-review and goal setting for next year.' },
   ];
 
+  newWeeklyMeeting: WeeklyMeeting | null = null;
+  newQuarterlyMeeting: QuarterlyMeeting | null = null;
+
   constructor(private router: Router) {}
+
+  addWeeklyMeeting(): void {
+    if (this.newWeeklyMeeting) return;
+    const nextId = Date.now();
+    this.newWeeklyMeeting = { id: nextId, name: '', date: '', summary: '' };
+    this.weeklyMeetings = [...this.weeklyMeetings, this.newWeeklyMeeting];
+  }
+
+  addQuarterlyMeeting(): void {
+    if (this.newQuarterlyMeeting) return;
+    const nextId = Date.now();
+    this.newQuarterlyMeeting = { id: nextId, name: '', date: '', location: '', summary: '' };
+    this.quarterlyMeetings = [...this.quarterlyMeetings, this.newQuarterlyMeeting];
+  }
 
   goToWeeklyDetail(id: number): void {
     this.router.navigate(['/meetings/weekly', id]);
