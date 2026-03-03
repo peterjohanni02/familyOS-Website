@@ -13,6 +13,16 @@ import { Router } from '@angular/router';
 
       <div class="section-block">
         <h2>💑 Couple Check-In</h2>
+        <div class="checkin-boxes">
+          <div class="checkin-box">
+            <label class="checkin-label" for="checkin-him">Him</label>
+            <textarea id="checkin-him" class="checkin-textarea" placeholder="Notes..."></textarea>
+          </div>
+          <div class="checkin-box">
+            <label class="checkin-label" for="checkin-her">Her</label>
+            <textarea id="checkin-her" class="checkin-textarea" placeholder="Notes..."></textarea>
+          </div>
+        </div>
       </div>
 
       <div class="section-block">
@@ -74,6 +84,17 @@ import { Router } from '@angular/router';
       font-size: 1.3rem; font-weight: 700; color: #1e1e2e;
       border-bottom: 2px solid #e0e0f0; padding-bottom: 10px; margin-bottom: 16px;
     }
+    .checkin-boxes { display: flex; gap: 24px; }
+    .checkin-box { flex: 1; display: flex; flex-direction: column; gap: 8px; }
+    .checkin-label { font-size: 1rem; font-weight: 700; color: #7c5cbf; }
+    .checkin-textarea {
+      width: 100%; height: 180px; padding: 12px; font-size: 1rem;
+      border: 2px solid #d6ccf5; border-radius: 10px; resize: vertical;
+      font-family: inherit; color: #1e1e2e; background: #faf9ff;
+      transition: border-color .15s;
+      box-sizing: border-box;
+    }
+    .checkin-textarea:focus { outline: none; border-color: #7c5cbf; }
   `]
 })
 export class WeeklyMeetingDetail {
