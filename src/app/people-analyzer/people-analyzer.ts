@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
-import { PeopleService, Person } from './people.service';
+import { PeopleService, Person, PersonReport } from './people.service';
 
 type ScoreKey = 'spiritual' | 'mental' | 'academic' | 'behavioral';
 
@@ -51,10 +51,10 @@ type ScoreKey = 'spiritual' | 'mental' | 'academic' | 'behavioral';
           @for (person of people; track person.id) {
             <tr (click)="goToDetail(person.id)">
               <td>{{ person.name }}</td>
-              <td>{{ person.spiritual }}/10</td>
-              <td>{{ person.mental }}/10</td>
-              <td>{{ person.academic }}/10</td>
-              <td>{{ person.behavioral }}/10</td>
+              <td>{{ latestScore(person, 'spiritual') }}</td>
+              <td>{{ latestScore(person, 'mental') }}</td>
+              <td>{{ latestScore(person, 'academic') }}</td>
+              <td>{{ latestScore(person, 'behavioral') }}</td>
             </tr>
           }
         </tbody>
@@ -128,6 +128,13 @@ export class PeopleAnalyzer {
 
   below(key: ScoreKey): string[] {
     return this.people.filter(p => p[key] <= 4).map(p => p.name);
+  latestScore(person: Person, field: keyof PersonReport): string {
+    const r = person.reports.at(-1);
+    return r ? `${r[field]}/10` : '—';
+  }
+
+  goToDetail(id: number): void {
+    this.router.navigate(['/people-analyzer/person', id]);
   }
 
   top(key: ScoreKey): string[] {
