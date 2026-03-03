@@ -215,6 +215,7 @@ export class PersonDetail implements OnInit {
   showPopup = false;
   editingReport: PersonReport | null = null;
   draftReport: PersonReport = { id: 0, date: '', spiritual: 5, mental: 5, academic: 5, behavioral: 5, notes: '' };
+  private backUrl = '/people-analyzer';
 
   get latestReport(): PersonReport | null {
     if (!this.person.reports.length) return null;
@@ -225,7 +226,13 @@ export class PersonDetail implements OnInit {
     private route: ActivatedRoute,
     private router: Router,
     private peopleService: PeopleService,
-  ) {}
+  ) {
+    const nav = this.router.getCurrentNavigation();
+    const url = nav?.extras?.state?.['backUrl'] ?? (window.history.state as { backUrl?: string })?.backUrl;
+    if (url) {
+      this.backUrl = url;
+    }
+  }
 
   ngOnInit(): void {
     const id = this.route.snapshot.paramMap.get('id');
@@ -285,6 +292,6 @@ export class PersonDetail implements OnInit {
   }
 
   goBack(): void {
-    this.router.navigate(['/people-analyzer']);
+    this.router.navigateByUrl(this.backUrl);
   }
 }
