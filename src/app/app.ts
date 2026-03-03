@@ -20,8 +20,8 @@ import { Sidebar } from './sidebar/sidebar';
       margin-left: 220px;
       flex: 1;
       display: flex;
-      align-items: center;
-      justify-content: center;
+      align-items: flex-start;
+      justify-content: flex-start;
       padding: 40px;
     }
     @media (max-width: 640px) {
