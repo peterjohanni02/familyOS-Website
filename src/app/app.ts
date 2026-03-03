@@ -15,14 +15,13 @@ import { Sidebar } from './sidebar/sidebar';
     :host {
       display: flex;
       min-height: 100vh;
+      width: 100%;
     }
     .main-content {
       margin-left: 220px;
       flex: 1;
-      display: flex;
-      align-items: center;
-      justify-content: center;
       padding: 40px;
+      min-width: 0;
     }
     @media (max-width: 640px) {
       .main-content {

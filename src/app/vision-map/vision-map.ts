@@ -20,38 +20,65 @@ interface Value {
 
       <div class="vm-card">
         <h3>Mission Statement</h3>
-        <textarea [(ngModel)]="missionStatement" rows="6" placeholder="Enter your family's mission statement..."></textarea>
-        <button class="save-btn" (click)="saveMission()">Save</button>
+        <p class="vm-display-text">{{ missionStatement || 'No mission statement set.' }}</p>
+        @if (editingMission) {
+          <textarea class="vm-edit-textarea" [(ngModel)]="missionDraft" rows="6" placeholder="Enter your family's mission statement..."></textarea>
+          <button class="save-btn" (click)="saveMission()">Save</button>
+        }
+        <button class="edit-btn" (click)="startEditMission()">Edit</button>
       </div>
 
       <div class="vm-card">
         <h3>Vision Statement</h3>
-        <textarea [(ngModel)]="visionStatement" rows="6" placeholder="Enter your family's vision statement..."></textarea>
-        <button class="save-btn" (click)="saveVision()">Save</button>
+        <p class="vm-display-text">{{ visionStatement || 'No vision statement set.' }}</p>
+        @if (editingVision) {
+          <textarea class="vm-edit-textarea" [(ngModel)]="visionDraft" rows="6" placeholder="Enter your family's vision statement..."></textarea>
+          <button class="save-btn" (click)="saveVision()">Save</button>
+        }
+        <button class="edit-btn" (click)="startEditVision()">Edit</button>
       </div>
 
       <div class="vm-card">
         <h3>Values</h3>
-        <table class="values-table">
-          <thead>
-            <tr>
-              <th>Value</th>
-              <th>Explanation</th>
-            </tr>
-          </thead>
-          <tbody>
+        <div class="values-display">
+          @if (hasValues()) {
             @for (value of values; track $index) {
-              <tr>
-                <td><input type="text" [(ngModel)]="value.phrase" placeholder="Enter value..." /></td>
-                <td><textarea [(ngModel)]="value.explanation" rows="3" placeholder="Explain this value..."></textarea></td>
-              </tr>
+              @if (value.phrase) {
+                <div class="value-item">
+                  <strong>{{ value.phrase }}</strong>
+                  @if (value.explanation) {
+                    <p>{{ value.explanation }}</p>
+                  }
+                </div>
+              }
             }
-          </tbody>
-        </table>
-        <div class="table-actions">
-          <button class="add-btn" (click)="addValue()">Add Value</button>
-          <button class="save-btn" (click)="saveValues()">Save Values</button>
+          } @else {
+            <p class="vm-display-text">No values defined.</p>
+          }
         </div>
+        @if (editingValues) {
+          <table class="values-table">
+            <thead>
+              <tr>
+                <th>Value</th>
+                <th>Explanation</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (value of valuesDraft; track $index) {
+                <tr>
+                  <td><input type="text" [(ngModel)]="value.phrase" placeholder="Enter value..." /></td>
+                  <td><textarea [(ngModel)]="value.explanation" rows="3" placeholder="Explain this value..."></textarea></td>
+                </tr>
+              }
+            </tbody>
+          </table>
+          <div class="table-actions">
+            <button class="add-btn" (click)="addValue()">Add Value</button>
+            <button class="save-btn" (click)="saveValues()">Save Values</button>
+          </div>
+        }
+        <button class="edit-btn" (click)="startEditValues()">Edit</button>
       </div>
     </div>
 
@@ -102,10 +129,21 @@ interface Value {
       border-bottom: 2px solid #7c5cbf; padding-bottom: 8px; margin-bottom: 20px;
     }
     .vm-card {
-      background: #fff; border-radius: 12px; padding: 24px;
+      background: #fff; border-radius: 12px; padding: 24px 24px 56px;
       box-shadow: 0 2px 8px rgba(0,0,0,0.08); margin-bottom: 20px;
+      position: relative;
     }
     h3 { font-size: 1.1rem; font-weight: 700; color: #333; margin-bottom: 12px; }
+    .vm-display-text {
+      font-size: 0.95rem; color: #555; line-height: 1.6;
+      white-space: pre-wrap; min-height: 1.6em;
+    }
+    .vm-edit-textarea {
+      width: 100%; resize: vertical; padding: 12px; font-size: 0.95rem;
+      border: 1px solid #ddd; border-radius: 8px; font-family: inherit;
+      color: #333; background: #fafafa; margin-top: 12px; display: block;
+    }
+    .vm-edit-textarea:focus { outline: none; border-color: #7c5cbf; background: #fff; }
     textarea {
       width: 100%; resize: vertical; padding: 12px; font-size: 0.95rem;
       border: 1px solid #ddd; border-radius: 8px; font-family: inherit;
@@ -115,10 +153,23 @@ interface Value {
     .save-btn {
       margin-top: 12px; padding: 8px 22px; background: linear-gradient(135deg, #7c5cbf, #4a90d9);
       color: #fff; border: none; border-radius: 8px; font-size: 0.9rem;
-      font-weight: 600; cursor: pointer; transition: opacity 0.2s;
+      font-weight: 600; cursor: pointer; transition: opacity 0.2s; display: inline-block;
     }
     .save-btn:hover { opacity: 0.88; }
-    .values-table { width: 100%; border-collapse: collapse; margin-bottom: 12px; }
+    .edit-btn {
+      position: absolute; bottom: 16px; right: 16px;
+      padding: 6px 18px; background: #fff; color: #7c5cbf;
+      border: 2px solid #7c5cbf; border-radius: 8px; font-size: 0.85rem;
+      font-weight: 600; cursor: pointer; transition: background 0.2s, color 0.2s;
+    }
+    .edit-btn:hover { background: #7c5cbf; color: #fff; }
+    .values-display { margin-bottom: 8px; }
+    .value-item {
+      padding: 8px 0; border-bottom: 1px solid #f0f0f0; margin-bottom: 4px;
+    }
+    .value-item strong { font-size: 0.95rem; color: #333; }
+    .value-item p { font-size: 0.9rem; color: #666; margin-top: 4px; }
+    .values-table { width: 100%; border-collapse: collapse; margin-bottom: 12px; margin-top: 12px; }
     .values-table th {
       text-align: left; padding: 8px 12px; font-size: 0.85rem;
       color: #666; border-bottom: 2px solid #eee; background: #f7f7fb;
@@ -141,20 +192,63 @@ interface Value {
 })
 export class VisionMap {
   missionStatement = '';
+  missionDraft = '';
+  editingMission = false;
+
   visionStatement = '';
+  visionDraft = '';
+  editingVision = false;
+
   values: Value[] = [{ phrase: '', explanation: '' }];
+  valuesDraft: Value[] = [];
+  editingValues = false;
+
   tenYearTarget = '';
   threeYearPicture = '';
   oneYearPlan = '';
   quarterlyRocks = '';
 
-  addValue(): void {
-    this.values.push({ phrase: '', explanation: '' });
+  hasValues(): boolean {
+    return this.values.some(v => v.phrase.trim() !== '');
   }
 
-  saveMission(): void { /* persist missionStatement */ }
-  saveVision(): void { /* persist visionStatement */ }
-  saveValues(): void { /* persist values */ }
+  startEditMission(): void {
+    this.missionDraft = this.missionStatement;
+    this.editingMission = true;
+  }
+
+  saveMission(): void {
+    this.missionStatement = this.missionDraft;
+    this.editingMission = false;
+  }
+
+  startEditVision(): void {
+    this.visionDraft = this.visionStatement;
+    this.editingVision = true;
+  }
+
+  saveVision(): void {
+    this.visionStatement = this.visionDraft;
+    this.editingVision = false;
+  }
+
+  startEditValues(): void {
+    // Value is a flat object so spread copy is sufficient
+    this.valuesDraft = this.values.map(v => ({ ...v }));
+    this.editingValues = true;
+  }
+
+  addValue(): void {
+    if (this.editingValues) {
+      this.valuesDraft.push({ phrase: '', explanation: '' });
+    }
+  }
+
+  saveValues(): void {
+    this.values = this.valuesDraft.map(v => ({ ...v }));
+    this.editingValues = false;
+  }
+
   saveTenYear(): void { /* persist tenYearTarget */ }
   saveThreeYear(): void { /* persist threeYearPicture */ }
   saveOneYear(): void { /* persist oneYearPlan */ }
