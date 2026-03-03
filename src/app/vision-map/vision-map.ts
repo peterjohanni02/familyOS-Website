@@ -84,6 +84,7 @@ interface Value {
     </div>
   `,
   styles: [`
+    :host { display: block; width: 100%; }
     .page-header {
       text-align: center;
       margin-bottom: 32px;
