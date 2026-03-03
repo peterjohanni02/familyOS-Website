@@ -30,7 +30,7 @@ import { RouterLink, RouterLinkActive } from '@angular/router';
           <span class="nav-icon">💰</span><span>Finances</span>
         </a>
         <a routerLink="/profile" routerLinkActive="active">
-          <span class="nav-icon">👤</span><span>Profile</span>
+          <span class="nav-icon">👤</span><span>Profile and Family</span>
         </a>
         <a routerLink="/people-analyzer" routerLinkActive="active">
           <span class="nav-icon">🧠</span><span>People Analyzer</span>
