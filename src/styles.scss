@@ -1,1 +1,10 @@
 /* You can add global styles to this file, and also import other style files */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Segoe UI', system-ui, sans-serif;
+  display: flex;
+  min-height: 100vh;
+  background: #f0f2f5;
+  color: #1e1e2e;
+}
