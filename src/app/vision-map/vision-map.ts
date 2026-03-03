@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { RocksService, Rock, RockStatus } from './rocks.service';
 
 interface Value {
   phrase: string;
@@ -103,12 +104,91 @@ interface Value {
         <button class="save-btn" (click)="saveOneYear()">Save</button>
       </div>
 
-      <div class="vm-card">
+      <div class="vm-card rocks-card">
         <h3>Quarterly Rocks</h3>
-        <textarea [(ngModel)]="quarterlyRocks" rows="6" placeholder="List your quarterly rocks..."></textarea>
-        <button class="save-btn" (click)="saveQuarterlyRocks()">Save</button>
+        <table class="rocks-table">
+          <thead>
+            <tr>
+              <th>Title</th>
+              <th>Year</th>
+              <th>Quarter</th>
+              <th>Status</th>
+              <th>Owner</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (rock of rocks; track rock.id) {
+              <tr (click)="openRock(rock)">
+                <td>{{ rock.title }}</td>
+                <td>{{ rock.year }}</td>
+                <td>Q{{ rock.quarter }}</td>
+                <td><span [class]="'status-badge ' + statusClass(rock.status)">{{ rock.status }}</span></td>
+                <td>{{ rock.owner }}</td>
+              </tr>
+            }
+            @if (!rocks.length) {
+              <tr class="empty-row"><td colspan="5">No rocks yet. Add one below.</td></tr>
+            }
+          </tbody>
+        </table>
+        <button class="add-btn" (click)="openNewRock()">+ New Rock</button>
       </div>
     </div>
+
+    @if (showRockPopup) {
+      <div class="modal-overlay" (click)="closeRockPopup()">
+        <div class="modal" (click)="$event.stopPropagation()">
+          <h2>{{ editingRock ? 'Edit Rock' : 'New Rock' }}</h2>
+          <div class="form-field">
+            <label>Title</label>
+            <input type="text" [(ngModel)]="draftRock.title" placeholder="Rock title..." />
+          </div>
+          <div class="form-row">
+            <div class="form-field">
+              <label>Year</label>
+              <input type="number" [(ngModel)]="draftRock.year" placeholder="2025" />
+            </div>
+            <div class="form-field">
+              <label>Quarter</label>
+              <select [(ngModel)]="draftRock.quarter">
+                <option [ngValue]="1">Q1</option>
+                <option [ngValue]="2">Q2</option>
+                <option [ngValue]="3">Q3</option>
+                <option [ngValue]="4">Q4</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-field">
+              <label>Status</label>
+              <select [(ngModel)]="draftRock.status">
+                <option value="not begun">Not Begun</option>
+                <option value="on track">On Track</option>
+                <option value="off track">Off Track</option>
+                <option value="completed">Completed</option>
+                <option value="abandoned">Abandoned</option>
+              </select>
+            </div>
+            <div class="form-field">
+              <label>Owner</label>
+              <input type="text" [(ngModel)]="draftRock.owner" placeholder="Owner..." />
+            </div>
+          </div>
+          <div class="form-field">
+            <label>Description</label>
+            <textarea [(ngModel)]="draftRock.description" rows="3" placeholder="Describe this rock..."></textarea>
+          </div>
+          <div class="form-field">
+            <label>Notes</label>
+            <textarea [(ngModel)]="draftRock.notes" rows="3" placeholder="Additional notes..."></textarea>
+          </div>
+          <div class="modal-actions">
+            <button class="save-btn" (click)="saveRock()">💾 Save</button>
+            <button class="close-btn" (click)="closeRockPopup()">✕ Close</button>
+          </div>
+        </div>
+      </div>
+    }
   `,
   styles: [`
     :host { display: block; width: 100%; }
@@ -183,11 +263,66 @@ interface Value {
     .values-table textarea { min-height: 64px; }
     .table-actions { display: flex; gap: 12px; align-items: center; }
     .add-btn {
-      padding: 8px 22px; background: #fff; color: #7c5cbf;
-      border: 2px solid #7c5cbf; border-radius: 8px; font-size: 0.9rem;
-      font-weight: 600; cursor: pointer; transition: background 0.2s, color 0.2s;
+      padding: 8px 22px; background: #7c5cbf; color: #fff;
+      border: none; border-radius: 8px; font-size: 0.9rem;
+      font-weight: 600; cursor: pointer; transition: background 0.2s;
     }
-    .add-btn:hover { background: #7c5cbf; color: #fff; }
+    .add-btn:hover { background: #5a3fa0; }
+    .rocks-card { padding-bottom: 24px; }
+    .rocks-table { width: 100%; border-collapse: collapse; margin-bottom: 12px; margin-top: 12px; }
+    .rocks-table th {
+      text-align: left; padding: 8px 12px; font-size: 0.85rem;
+      color: #666; border-bottom: 2px solid #eee; background: #f7f7fb;
+    }
+    .rocks-table td { padding: 10px 12px; border-bottom: 1px solid #f0f0f0; vertical-align: middle; font-size: .95rem; color: #333; }
+    .rocks-table tbody tr { cursor: pointer; transition: background .15s; }
+    .rocks-table tbody tr:hover { background: #f5f3ff; }
+    .rocks-table tbody tr:last-child { border-bottom: none; }
+    .empty-row td { color: #aaa; font-style: italic; text-align: center; padding: 16px; }
+    .status-badge {
+      display: inline-block; padding: 3px 10px; border-radius: 12px;
+      font-size: .82rem; font-weight: 600; text-transform: capitalize;
+    }
+    .status-completed { background: #e8f5e9; color: #2e7d32; }
+    .status-on-track { background: #e3f2fd; color: #1565c0; }
+    .status-off-track { background: #fff3e0; color: #e65100; }
+    .status-abandoned { background: #fce4ec; color: #b71c1c; }
+    .status-not-begun { background: #f5f5f5; color: #757575; }
+    .modal-overlay {
+      position: fixed; inset: 0; background: rgba(0,0,0,.45);
+      display: flex; align-items: center; justify-content: center; z-index: 1000;
+    }
+    .modal {
+      background: #fff; border-radius: 14px; padding: 32px;
+      width: 100%; max-width: 520px; box-shadow: 0 8px 32px rgba(0,0,0,.18);
+      max-height: 90vh; overflow-y: auto;
+    }
+    .modal h2 { font-size: 1.4rem; font-weight: 800; color: #1e1e2e; margin-bottom: 20px; }
+    .form-field { display: flex; flex-direction: column; gap: 4px; margin-bottom: 16px; }
+    .form-field label { font-size: .9rem; font-weight: 700; color: #4a4a6a; }
+    .form-field input[type="text"], .form-field input[type="number"], .form-field select {
+      padding: 8px 10px; border: 2px solid #d6ccf5; border-radius: 8px;
+      font-size: .95rem; font-family: inherit; color: #1e1e2e; background: #faf9ff;
+      transition: border-color .15s;
+    }
+    .form-field input[type="text"]:focus,
+    .form-field input[type="number"]:focus,
+    .form-field select:focus { outline: none; border-color: #7c5cbf; }
+    .form-field textarea {
+      padding: 8px 10px; border: 2px solid #d6ccf5; border-radius: 8px;
+      font-size: .95rem; font-family: inherit; color: #1e1e2e; background: #faf9ff;
+      resize: vertical; transition: border-color .15s;
+    }
+    .form-field textarea:focus { outline: none; border-color: #7c5cbf; }
+    .form-row { display: flex; gap: 16px; }
+    .form-row .form-field { flex: 1; }
+    .modal-actions { display: flex; gap: 12px; justify-content: flex-end; margin-top: 8px; }
+    .close-btn {
+      padding: 10px 20px; background: #f5f3ff; color: #7c5cbf;
+      border: 1px solid #d6ccf5; border-radius: 8px; font-size: 1rem; font-weight: 600;
+      cursor: pointer; transition: background .15s;
+    }
+    .close-btn:hover { background: #ede8ff; }
   `]
 })
 export class VisionMap {
@@ -206,7 +341,22 @@ export class VisionMap {
   tenYearTarget = '';
   threeYearPicture = '';
   oneYearPlan = '';
-  quarterlyRocks = '';
+
+  showRockPopup = false;
+  editingRock: Rock | null = null;
+  draftRock: Rock = this.emptyRock();
+
+  get rocks(): Rock[] {
+    return this.rocksService.rocks;
+  }
+
+  constructor(private rocksService: RocksService) {}
+
+  private emptyRock(): Rock {
+    const now = new Date();
+    const quarter = (Math.floor(now.getMonth() / 3) + 1) as 1 | 2 | 3 | 4;
+    return { id: 0, title: '', year: now.getFullYear(), quarter, status: 'not begun', owner: '', description: '', notes: '' };
+  }
 
   hasValues(): boolean {
     return this.values.some(v => v.phrase.trim() !== '');
@@ -252,5 +402,36 @@ export class VisionMap {
   saveTenYear(): void { /* persist tenYearTarget */ }
   saveThreeYear(): void { /* persist threeYearPicture */ }
   saveOneYear(): void { /* persist oneYearPlan */ }
-  saveQuarterlyRocks(): void { /* persist quarterlyRocks */ }
+
+  openNewRock(): void {
+    this.editingRock = null;
+    this.draftRock = this.emptyRock();
+    this.draftRock.id = Date.now();
+    this.showRockPopup = true;
+  }
+
+  openRock(rock: Rock): void {
+    this.editingRock = rock;
+    this.draftRock = { ...rock };
+    this.showRockPopup = true;
+  }
+
+  saveRock(): void {
+    if (this.editingRock) {
+      this.rocksService.update({ ...this.draftRock });
+    } else {
+      this.rocksService.add({ ...this.draftRock });
+    }
+    this.showRockPopup = false;
+    this.editingRock = null;
+  }
+
+  closeRockPopup(): void {
+    this.showRockPopup = false;
+    this.editingRock = null;
+  }
+
+  statusClass(status: RockStatus): string {
+    return 'status-' + status.replace(/\s+/g, '-');
+  }
 }

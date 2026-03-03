@@ -135,6 +135,58 @@ describe('VisionMap', () => {
     expect(() => component.saveTenYear()).not.toThrow();
     expect(() => component.saveThreeYear()).not.toThrow();
     expect(() => component.saveOneYear()).not.toThrow();
-    expect(() => component.saveQuarterlyRocks()).not.toThrow();
+  });
+
+  it('should open rock popup for new rock when openNewRock() is called', () => {
+    component.openNewRock();
+    expect(component.showRockPopup).toBeTruthy();
+    expect(component.editingRock).toBeNull();
+    expect(component.draftRock.title).toBe('');
+  });
+
+  it('should open rock popup with data when openRock() is called', () => {
+    const rock = { id: 1, title: 'Test Rock', year: 2025, quarter: 1 as const, status: 'on track' as const, owner: 'John', description: '', notes: '' };
+    component.openRock(rock);
+    expect(component.showRockPopup).toBeTruthy();
+    expect(component.editingRock).toBe(rock);
+    expect(component.draftRock.title).toBe('Test Rock');
+  });
+
+  it('should close rock popup when closeRockPopup() is called', () => {
+    component.openNewRock();
+    component.closeRockPopup();
+    expect(component.showRockPopup).toBeFalsy();
+    expect(component.editingRock).toBeNull();
+  });
+
+  it('should add a new rock to the service when saveRock() is called for new rock', () => {
+    const initialCount = component.rocks.length;
+    component.openNewRock();
+    component.draftRock.title = 'New Rock';
+    component.saveRock();
+    expect(component.rocks.length).toBe(initialCount + 1);
+    expect(component.showRockPopup).toBeFalsy();
+  });
+
+  it('should return correct status CSS class from statusClass()', () => {
+    expect(component.statusClass('on track')).toBe('status-on-track');
+    expect(component.statusClass('not begun')).toBe('status-not-begun');
+    expect(component.statusClass('completed')).toBe('status-completed');
+    expect(component.statusClass('off track')).toBe('status-off-track');
+    expect(component.statusClass('abandoned')).toBe('status-abandoned');
+  });
+
+  it('should render rocks table with Quarterly Rocks heading', () => {
+    fixture.detectChanges();
+    const compiled = fixture.nativeElement as HTMLElement;
+    expect(compiled.textContent).toContain('Quarterly Rocks');
+    expect(compiled.querySelector('.rocks-table')).toBeTruthy();
+  });
+
+  it('should render "+ New Rock" button', () => {
+    fixture.detectChanges();
+    const buttons = Array.from((fixture.nativeElement as HTMLElement).querySelectorAll('button'));
+    const addBtn = buttons.find(b => b.textContent?.trim() === '+ New Rock');
+    expect(addBtn).toBeTruthy();
   });
 });

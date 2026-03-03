@@ -186,7 +186,7 @@ export class Meetings {
 
   goToWeeklyDetail(id: number): void {
     const meeting = this.weeklyMeetings.find(m => m.id === id);
-    this.router.navigate(['/meetings/weekly', id], { state: { name: meeting?.name || 'Weekly Meeting Detail' } });
+    this.router.navigate(['/meetings/weekly', id], { state: { name: meeting?.name || 'Weekly Meeting Detail', date: meeting?.date || '' } });
   }
 
   goToQuarterlyDetail(id: number): void {
