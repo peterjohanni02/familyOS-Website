@@ -8,7 +8,7 @@ import { Router } from '@angular/router';
     <div class="page-content">
       <div class="page-header">
         <button class="back-btn" (click)="goBack()">← Back</button>
-        <h1>Weekly Meeting Detail</h1>
+        <h1>{{ meetingName }}</h1>
       </div>
 
       <div class="section-block">
@@ -77,7 +77,13 @@ import { Router } from '@angular/router';
   `]
 })
 export class WeeklyMeetingDetail {
-  constructor(private router: Router) {}
+  meetingName: string;
+
+  constructor(private router: Router) {
+    const nav = this.router.getCurrentNavigation();
+    const name = nav?.extras?.state?.['name'] ?? (window.history.state as { name?: string })?.name;
+    this.meetingName = name || 'Weekly Meeting Detail';
+  }
 
   goBack(): void {
     this.router.navigate(['/meetings']);
