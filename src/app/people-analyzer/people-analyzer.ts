@@ -121,24 +121,22 @@ export class PeopleAnalyzer {
   constructor(private router: Router, private peopleService: PeopleService) {}
 
   avg(key: ScoreKey): string {
-    const vals = this.people.map(p => p[key]);
+    const vals = this.people.map(p => p.reports.at(-1)?.[key] ?? 0);
     if (!vals.length) return '—';
     return (vals.reduce((a, b) => a + b, 0) / vals.length).toFixed(1);
   }
 
   below(key: ScoreKey): string[] {
-    return this.people.filter(p => p[key] <= 4).map(p => p.name);
+    return this.people.filter(p => (p.reports.at(-1)?.[key] ?? 0) <= 4).map(p => p.name);
+  }
+
   latestScore(person: Person, field: keyof PersonReport): string {
     const r = person.reports.at(-1);
     return r ? `${r[field]}/10` : '—';
   }
 
-  goToDetail(id: number): void {
-    this.router.navigate(['/people-analyzer/person', id]);
-  }
-
   top(key: ScoreKey): string[] {
-    return this.people.filter(p => p[key] >= 9).map(p => p.name);
+    return this.people.filter(p => (p.reports.at(-1)?.[key] ?? 0) >= 9).map(p => p.name);
   }
 
   goToDetail(id: number): void {
