@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
+import { PeopleService, Person, PersonReport } from '../../people-analyzer/people.service';
 
 @Component({
   selector: 'app-weekly-meeting-detail',
@@ -30,7 +31,29 @@ import { Router } from '@angular/router';
       </div>
 
       <div class="section-block">
-        <h2>🔍 Family Analyser?</h2>
+        <h2>🔍 Family Analyser</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Spiritual</th>
+              <th>Mental</th>
+              <th>Academic</th>
+              <th>Behavioral</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (person of people; track person.id) {
+              <tr (click)="goToPersonDetail(person.id)">
+                <td>{{ person.name }}</td>
+                <td>{{ latestScore(person, 'spiritual') }}</td>
+                <td>{{ latestScore(person, 'mental') }}</td>
+                <td>{{ latestScore(person, 'academic') }}</td>
+                <td>{{ latestScore(person, 'behavioral') }}</td>
+              </tr>
+            }
+          </tbody>
+        </table>
       </div>
 
       <div class="section-block">
@@ -95,15 +118,34 @@ import { Router } from '@angular/router';
       box-sizing: border-box;
     }
     .checkin-textarea:focus { outline: none; border-color: #7c5cbf; }
+    table { width: 100%; border-collapse: collapse; background: #fff; border-radius: 10px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,.08); }
+    thead th { background: #f5f3ff; color: #7c5cbf; font-weight: 700; padding: 12px 16px; text-align: left; font-size: .92rem; text-transform: uppercase; letter-spacing: .05em; }
+    tbody tr { border-bottom: 1px solid #f0f0f8; cursor: pointer; transition: background .15s; }
+    tbody tr:last-child { border-bottom: none; }
+    tbody tr:hover { background: #f5f3ff; }
+    tbody td { padding: 12px 16px; color: #333; font-size: .95rem; }
   `]
 })
 export class WeeklyMeetingDetail {
   meetingName: string;
 
-  constructor(private router: Router) {
+  get people(): Person[] {
+    return this.peopleService.people;
+  }
+
+  constructor(private router: Router, private peopleService: PeopleService) {
     const nav = this.router.getCurrentNavigation();
     const name = nav?.extras?.state?.['name'] ?? (window.history.state as { name?: string })?.name;
     this.meetingName = name || 'Weekly Meeting Detail';
+  }
+
+  latestScore(person: Person, field: keyof PersonReport): string {
+    const r = person.reports?.at(-1);
+    return r ? `${r[field]}/10` : '—';
+  }
+
+  goToPersonDetail(id: number): void {
+    this.router.navigate(['/people-analyzer/person', id]);
   }
 
   goBack(): void {
