@@ -1,3 +1,18 @@
 import { Routes } from '@angular/router';
+import { Home } from './home/home';
+import { VisionMap } from './vision-map/vision-map';
+import { Meetings } from './meetings/meetings';
+import { TasksIssues } from './tasks-issues/tasks-issues';
+import { Calendar } from './calendar/calendar';
+import { Finances } from './finances/finances';
+import { Profile } from './profile/profile';
 
-export const routes: Routes = [];
+export const routes: Routes = [
+  { path: '', component: Home },
+  { path: 'vision-map', component: VisionMap },
+  { path: 'meetings', component: Meetings },
+  { path: 'tasks-issues', component: TasksIssues },
+  { path: 'calendar', component: Calendar },
+  { path: 'finances', component: Finances },
+  { path: 'profile', component: Profile },
+];
