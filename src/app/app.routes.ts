@@ -1,4 +1,9 @@
 import { Routes } from '@angular/router';
+import { Landing } from './landing/landing';
+import { Login } from './auth/login';
+import { Signup } from './auth/signup';
+import { RegisterFamily } from './auth/register-family';
+import { Dashboard } from './dashboard/dashboard';
 import { Home } from './home/home';
 import { VisionMap } from './vision-map/vision-map';
 import { Meetings } from './meetings/meetings';
@@ -13,7 +18,12 @@ import { PeopleAnalyzer } from './people-analyzer/people-analyzer';
 import { PersonDetail } from './people-analyzer/person-detail/person-detail';
 
 export const routes: Routes = [
-  { path: '', component: Home },
+  { path: '', component: Landing },
+  { path: 'login', component: Login },
+  { path: 'signup', component: Signup },
+  { path: 'register-family', component: RegisterFamily },
+  { path: 'dashboard', component: Dashboard },
+  { path: 'home', component: Home },
   { path: 'vision-map', component: VisionMap },
   { path: 'meetings', component: Meetings },
   { path: 'meetings/weekly/:id', component: WeeklyMeetingDetail },

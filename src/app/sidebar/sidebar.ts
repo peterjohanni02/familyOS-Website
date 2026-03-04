@@ -1,18 +1,19 @@
 import { Component } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
+import { AuthService } from '../auth/auth.service';
 
 @Component({
   selector: 'app-sidebar',
   imports: [RouterLink, RouterLinkActive],
   template: `
     <aside class="sidebar">
-      <a routerLink="/" class="sidebar-logo">
+      <a routerLink="/dashboard" class="sidebar-logo">
         <div class="logo-icon">🏠</div>
-        <div class="logo-text">familyOS<span>Home</span></div>
+        <div class="logo-text">Family Atlas<span>Dashboard</span></div>
       </a>
       <nav>
-        <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
-          <span class="nav-icon">🏠</span><span>Home</span>
+        <a routerLink="/dashboard" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+          <span class="nav-icon">🏠</span><span>Dashboard</span>
         </a>
         <a routerLink="/vision-map" routerLinkActive="active">
           <span class="nav-icon">🗺️</span><span>Vision Map</span>
@@ -36,6 +37,11 @@ import { RouterLink, RouterLinkActive } from '@angular/router';
           <span class="nav-icon">🧠</span><span>People Analyzer</span>
         </a>
       </nav>
+      <div class="sidebar-footer">
+        <button class="logout-btn" (click)="logout()">
+          <span class="nav-icon">🚪</span><span>Logout</span>
+        </button>
+      </div>
     </aside>
   `,
   styles: [`
@@ -133,6 +139,35 @@ import { RouterLink, RouterLinkActive } from '@angular/router';
         padding: 18px 10px;
       }
     }
+    .sidebar-footer {
+      padding: 12px 0;
+      border-top: 1px solid rgba(255,255,255,.08);
+    }
+    .logout-btn {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 20px;
+      width: 100%;
+      background: none;
+      border: none;
+      color: rgba(255,255,255,.65);
+      font-size: .93rem;
+      font-weight: 500;
+      cursor: pointer;
+      border-left: 3px solid transparent;
+      transition: background .15s, color .15s;
+    }
+    .logout-btn:hover {
+      background: rgba(255,255,255,.07);
+      color: #fff;
+    }
   `]
 })
-export class Sidebar {}
+export class Sidebar {
+  constructor(private auth: AuthService) {}
+
+  logout(): void {
+    this.auth.logout();
+  }
+}
