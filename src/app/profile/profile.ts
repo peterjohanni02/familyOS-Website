@@ -176,6 +176,8 @@ export class Profile {
     { name: 'Sarah Johnson',  role: 'Mother',   dateOfBirth: 'July 22, 1980'     },
     { name: 'Ethan Johnson',  role: 'Son',      dateOfBirth: 'September 5, 2005' },
     { name: 'Lily Johnson',   role: 'Daughter', dateOfBirth: 'February 18, 2009' },
+    { name: 'Noah Johnson',   role: 'Son',      dateOfBirth: 'April 3, 2012'     },
+    { name: 'Ava Johnson',    role: 'Daughter', dateOfBirth: 'November 9, 2015'  },
   ];
 
   userProfile: UserProfile = {

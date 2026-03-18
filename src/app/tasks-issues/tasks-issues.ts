@@ -34,6 +34,32 @@ const PRIORITY_CLASS: Record<string, string> = {
   'This Year':    'badge-year',
 };
 
+const MOCK_TASKS: Task[] = [
+  { id: '1', title: 'Plan family camping trip',         assignee: 'James',  notes: 'Look at campgrounds for July.',          status: 'assigned',    priority: 'This Month'   },
+  { id: '2', title: 'Schedule dentist appointments',    assignee: 'Sarah',  notes: 'All 6 family members due for check-ups.', status: 'in-progress', priority: 'This Week'    },
+  { id: '3', title: 'Review and update family budget',  assignee: 'James',  notes: 'Focus on food and clothing lines.',       status: 'in-progress', priority: 'This Week'    },
+  { id: '4', title: 'Sign Noah up for soccer',          assignee: 'Sarah',  notes: 'Spring season registration closes soon.', status: 'assigned',    priority: 'Today'        },
+  { id: '5', title: 'Help Ethan with college prep',     assignee: 'James',  notes: 'Review SAT prep resources.',              status: 'future',      priority: 'This Quarter' },
+  { id: '6', title: 'Organize garage',                  assignee: 'Ethan',  notes: 'Sort donate vs. keep piles.',             status: 'future',      priority: 'This Month'   },
+  { id: '7', title: 'Plan Ava\'s birthday party',       assignee: 'Sarah',  notes: 'Ava\'s birthday is Nov 9. Invites need to go out by Oct 26.', status: 'assigned',    priority: 'This Month'   },
+  { id: '8', title: 'Complete science fair project',    assignee: 'Noah',   notes: 'Project due March 20.',                   status: 'in-progress', priority: 'This Week'    },
+  { id: '9', title: 'Restock pantry',                   assignee: 'Sarah',  notes: 'Bulk items low: rice, pasta, canned goods.', status: 'assigned', priority: 'Today'        },
+  { id: '10', title: 'Research 529 contribution limits', assignee: 'James', notes: 'Maximize contributions for all kids.',    status: 'future',      priority: 'This Quarter' },
+  { id: '11', title: 'Family photos appointment',       assignee: 'Sarah',  notes: 'Book photographer for spring session.',   status: 'completed',   priority: 'This Month'   },
+  { id: '12', title: 'Fix leaky bathroom faucet',       assignee: 'James',  notes: 'Master bath faucet drips overnight.',     status: 'roadblocked', priority: 'This Week'    },
+  { id: '13', title: 'Read book for school',            assignee: 'Lily',   notes: 'Finish "To Kill a Mockingbird" by Friday.', status: 'in-progress', priority: 'This Week'  },
+  { id: '14', title: 'Update vision map',               assignee: 'James',  notes: 'Add Q2 rocks and review 1-year plan.',    status: 'assigned',    priority: 'This Quarter' },
+  { id: '15', title: 'Car oil change – Vehicle 2',      assignee: 'Sarah',  notes: 'Overdue by 500 miles.',                   status: 'completed',   priority: 'Today'        },
+];
+
+const MOCK_ISSUES: Issue[] = [
+  { id: '101', text: 'Screen time limits need to be revisited for all kids.' },
+  { id: '102', text: 'Chore chart not being followed consistently.' },
+  { id: '103', text: 'Family communication app not being used by Ethan and Lily.' },
+  { id: '104', text: 'Garage door opener needs repair.' },
+  { id: '105', text: 'Noah and Ava\'s bedtime routine taking too long.' },
+];
+
 function loadFromStorage<T>(key: string, fallback: T): T {
   try {
     const raw = localStorage.getItem(key);
@@ -338,8 +364,8 @@ export class TasksIssues {
   readonly stages = STAGES;
   readonly priorities = PRIORITIES;
 
-  private _tasks = signal<Task[]>(loadFromStorage<Task[]>('familyos-tasks', []));
-  readonly issues = signal<Issue[]>(loadFromStorage<Issue[]>('familyos-issues', []));
+  private _tasks = signal<Task[]>(loadFromStorage<Task[]>('familyos-tasks', MOCK_TASKS));
+  readonly issues = signal<Issue[]>(loadFromStorage<Issue[]>('familyos-issues', MOCK_ISSUES));
 
   readonly showTaskPopup = signal(false);
   readonly editingTaskId = signal<string | null>(null);

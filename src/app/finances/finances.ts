@@ -179,26 +179,32 @@ interface Debt {
 })
 export class Finances {
   budgetCategories: BudgetCategory[] = [
-    { id: 1, category: 'Housing',        budget: 2000, spent: 1800 },
-    { id: 2, category: 'Food',           budget: 800,  spent: 650  },
-    { id: 3, category: 'Transportation', budget: 500,  spent: 420  },
-    { id: 4, category: 'Entertainment',  budget: 200,  spent: 250  },
-    { id: 5, category: 'Healthcare',     budget: 300,  spent: 120  },
+    { id: 1, category: 'Housing',        budget: 2200, spent: 2200 },
+    { id: 2, category: 'Food',           budget: 1400, spent: 1280 },
+    { id: 3, category: 'Transportation', budget: 700,  spent: 650  },
+    { id: 4, category: 'Entertainment',  budget: 350,  spent: 390  },
+    { id: 5, category: 'Healthcare',     budget: 500,  spent: 310  },
+    { id: 6, category: 'Clothing',       budget: 300,  spent: 275  },
+    { id: 7, category: 'Education',      budget: 400,  spent: 360  },
+    { id: 8, category: 'Utilities',      budget: 280,  spent: 255  },
   ];
 
   assets: Asset[] = [
-    { name: 'Primary Home',      value: 450000 },
-    { name: 'Checking Account',  value: 12500  },
-    { name: 'Savings Account',   value: 35000  },
-    { name: 'Retirement (401k)', value: 85000  },
-    { name: 'Vehicle',           value: 28000  },
+    { name: 'Primary Home',      value: 520000 },
+    { name: 'Checking Account',  value: 18500  },
+    { name: 'Savings Account',   value: 52000  },
+    { name: 'Retirement (401k)', value: 138000 },
+    { name: 'Vehicle 1',         value: 32000  },
+    { name: 'Vehicle 2',         value: 21000  },
+    { name: 'College Fund (529)',value: 24000  },
   ];
 
   debts: Debt[] = [
-    { name: 'Mortgage',     balance: 320000, interestRate: '3.75%' },
-    { name: 'Car Loan',     balance: 18500,  interestRate: '5.9%'  },
-    { name: 'Credit Card',  balance: 2300,   interestRate: '19.99%'},
-    { name: 'Student Loan', balance: 15000,  interestRate: '4.5%'  },
+    { name: 'Mortgage',      balance: 398000, interestRate: '3.75%' },
+    { name: 'Car Loan 1',    balance: 24000,  interestRate: '5.4%'  },
+    { name: 'Car Loan 2',    balance: 11500,  interestRate: '6.1%'  },
+    { name: 'Credit Card',   balance: 3200,   interestRate: '19.99%'},
+    { name: 'Student Loan',  balance: 15000,  interestRate: '4.5%'  },
   ];
 
   readonly showCategoryPopup = signal(false);
